@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Milestone](https://github.com/unity-game-framework/ugf-module-update/milestone/1?closed=1)
 
 ### Added
-- Nothing.
+- This is a initial release.
 
 ---
 > Unity Game Framework | Copyright 2019
