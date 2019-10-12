@@ -1,82 +1,95 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UGF.Application.Runtime;
 using UGF.Module.Update.Runtime.Handlers;
 using UGF.Update.Runtime;
-using Unity.Profiling;
-using UnityEngine.LowLevel;
-using PlayerLoops = UnityEngine.PlayerLoop;
+using UnityEngine.PlayerLoop;
 
 namespace UGF.Module.Update.Runtime
 {
     public class UpdateModule : ApplicationModuleBase, IUpdateModule
     {
-        public IUpdateCollection<IPreUpdateHandler> PreUpdate { get { return m_preUpdate; } }
-        public IUpdateCollection<IUpdateHandler> Update { get { return m_update; } }
-        public IUpdateCollection<IFixedUpdateHandler> FixedUpdate { get { return m_fixedUpdate; } }
-        public IUpdateCollection<IPostLateUpdateHandler> PostLateUpdate { get { return m_postLateUpdate; } }
+        public IUpdateProvider Provider { get; }
+        public IUpdateModuleDescription Description { get; }
+        public IReadOnlyDictionary<Type, IUpdateGroup> Groups { get; }
 
-        private readonly UpdateSetHandler<IPreUpdateHandler> m_preUpdate = new UpdateSetHandler<IPreUpdateHandler>(handler => handler.PreUpdate());
-        private readonly UpdateSet<IUpdateHandler> m_update = new UpdateSet<IUpdateHandler>();
-        private readonly UpdateSetHandler<IFixedUpdateHandler> m_fixedUpdate = new UpdateSetHandler<IFixedUpdateHandler>(handler => handler.OnFixedUpdate());
-        private readonly UpdateSetHandler<IPostLateUpdateHandler> m_postLateUpdate = new UpdateSetHandler<IPostLateUpdateHandler>(handler => handler.OnPostLateUpdate());
-        private static ProfilerMarker m_preUpdateMarker = new ProfilerMarker("UpdateModule.OnPreUpdate");
-        private static ProfilerMarker m_updateMarker = new ProfilerMarker("UpdateModule.OnUpdate");
-        private static ProfilerMarker m_fixedUpdateMarker = new ProfilerMarker("UpdateModule.OnFixedUpdate");
-        private static ProfilerMarker m_postLateUpdateMarker = new ProfilerMarker("UpdateModule.OnPostLateUpdate");
+        private readonly Dictionary<Type, IUpdateGroup> m_groups = new Dictionary<Type, IUpdateGroup>();
+
+        public UpdateModule(IUpdateProvider provider, IUpdateModuleDescription description)
+        {
+            Provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            Description = description ?? throw new ArgumentNullException(nameof(description));
+            Groups = new ReadOnlyDictionary<Type, IUpdateGroup>(m_groups);
+
+            AddGroup<Initialization, IInitializationHandler>(Description.InitializationGroupName, item => item.OnInitialization());
+            AddGroup<EarlyUpdate, IEarlyUpdateHandler>(Description.EarlyUpdateGroupName, item => item.OnEarlyUpdate());
+            AddGroup<FixedUpdate, IFixedUpdateHandler>(Description.FixedUpdateGroupName, item => item.OnFixedUpdate());
+            AddGroup<PreUpdate, IPreUpdateHandler>(Description.PreUpdateGroupName, item => item.PreUpdate());
+            AddGroup<UnityEngine.PlayerLoop.Update, IUpdateHandler>(Description.UpdateGroupName, item => item.OnUpdate());
+            AddGroup<PreLateUpdate, IPreLateUpdateHandler>(Description.PreLateUpdateGroupName, item => item.OnPreLateUpdate());
+            AddGroup<PostLateUpdate, IPostLateUpdateHandler>(Description.PostLateUpdateGroupName, item => item.OnPostLateUpdate());
+        }
 
         protected override void OnInitialize()
         {
             base.OnInitialize();
 
-            PlayerLoopSystem playerLoop = PlayerLoop.GetCurrentPlayerLoop();
-
-            UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(PlayerLoops.PreUpdate), OnPreUpdate);
-            UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(PlayerLoops.Update), OnUpdate);
-            UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(PlayerLoops.FixedUpdate), OnFixedUpdate);
-            UpdateUtility.TryAddUpdateFunction(playerLoop, typeof(PlayerLoops.PostLateUpdate), OnPostLateUpdate);
-
-            PlayerLoop.SetPlayerLoop(playerLoop);
+            foreach (KeyValuePair<Type, IUpdateGroup> pair in m_groups)
+            {
+                Provider.Add(pair.Key, pair.Value);
+            }
         }
 
         protected override void OnUninitialize()
         {
             base.OnUninitialize();
 
-            PlayerLoopSystem playerLoop = PlayerLoop.GetCurrentPlayerLoop();
-
-            UpdateUtility.TryRemoveUpdateFunction(playerLoop, typeof(PlayerLoops.PreUpdate), OnPreUpdate);
-            UpdateUtility.TryRemoveUpdateFunction(playerLoop, typeof(PlayerLoops.Update), OnUpdate);
-            UpdateUtility.TryRemoveUpdateFunction(playerLoop, typeof(PlayerLoops.FixedUpdate), OnFixedUpdate);
-            UpdateUtility.TryRemoveUpdateFunction(playerLoop, typeof(PlayerLoops.PostLateUpdate), OnPostLateUpdate);
-
-            PlayerLoop.SetPlayerLoop(playerLoop);
+            foreach (KeyValuePair<Type, IUpdateGroup> pair in m_groups)
+            {
+                Provider.Remove(pair.Value.Name);
+            }
         }
 
-        private void OnPreUpdate()
+        public void AddGroup<TSubSystem, TItem>(string name, UpdateHandler<TItem> handler)
         {
-            m_preUpdateMarker.Begin();
-            m_preUpdate.ApplyQueueAndUpdate();
-            m_preUpdateMarker.End();
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
+            if (handler == null) throw new ArgumentNullException(nameof(handler));
+
+            var group = new UpdateGroup<TItem>(name, new UpdateSetHandler<TItem>(handler));
+
+            AddGroup(typeof(TSubSystem), group);
         }
 
-        private void OnUpdate()
+        public void AddGroup(Type subSystemType, IUpdateGroup group)
         {
-            m_updateMarker.Begin();
-            m_update.ApplyQueueAndUpdate();
-            m_updateMarker.End();
+            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
+            if (group == null) throw new ArgumentNullException(nameof(group));
+            if (m_groups.ContainsKey(subSystemType)) throw new ArgumentException($"The group by the specified subsystem type already exists: '{subSystemType}'.", nameof(subSystemType));
+
+            m_groups.Add(subSystemType, group);
+
+            if (IsInitialized)
+            {
+                Provider.Add(subSystemType, group);
+            }
         }
 
-        private void OnFixedUpdate()
+        public void RemoveGroup<T>()
         {
-            m_fixedUpdateMarker.Begin();
-            m_fixedUpdate.ApplyQueueAndUpdate();
-            m_fixedUpdateMarker.End();
+            RemoveGroup(typeof(T));
         }
 
-        private void OnPostLateUpdate()
+        public void RemoveGroup(Type subSystemType)
         {
-            m_postLateUpdateMarker.Begin();
-            m_postLateUpdate.ApplyQueueAndUpdate();
-            m_postLateUpdateMarker.End();
+            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
+
+            if (IsInitialized && m_groups.TryGetValue(subSystemType, out IUpdateGroup group))
+            {
+                Provider.Remove(group.Name);
+            }
+
+            m_groups.Remove(subSystemType);
         }
     }
 }
