@@ -4,14 +4,14 @@ UGF.Module.Update
 
 ## Info
 
-- **Version**: `0.1.0-preview`
+- **Version**: `0.2.0-preview`
 - **Unity Version**: `2019.3.0`
 - **Api Compatibility Level**: `.NET Standard 2.0`
 
 ### Dependencies
 
 - [UGF.Module](https://github.com/unity-game-framework/ugf-module): `0.1.0-preview`
-- [UGF.Update](https://github.com/unity-game-framework/ugf-update): `3.2.0-preview`
+- [UGF.Update](https://github.com/unity-game-framework/ugf-update): `3.3.0-preview`
 
 ### Changelog
 
