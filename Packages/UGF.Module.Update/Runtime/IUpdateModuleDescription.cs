@@ -1,8 +1,6 @@
-using UGF.Description.Runtime;
-
 namespace UGF.Module.Update.Runtime
 {
-    public interface IUpdateModuleDescription : IDescription
+    public interface IUpdateModuleDescription
     {
         string InitializationGroupName { get; }
         string EarlyUpdateGroupName { get; }
