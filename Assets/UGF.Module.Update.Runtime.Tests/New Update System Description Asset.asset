@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b49001ea3a134b359c5606d4edb2daad, type: 3}
-  m_Name: New Update Module Asset
+  m_Script: {fileID: 11500000, guid: ea71b94d072e454e90f7c508a0972ae1, type: 3}
+  m_Name: New Update System Description Asset
   m_EditorClassIdentifier: 
-  m_systems:
-  - m_guid: a8c471a3362e4634f8eca5f6cbb3a8e1
-    m_asset: {fileID: 11400000, guid: a8c471a3362e4634f8eca5f6cbb3a8e1, type: 2}
+  m_target:
+    m_typeName: 
+  m_type:
+    m_typeName: 
+  m_insertion: 3
