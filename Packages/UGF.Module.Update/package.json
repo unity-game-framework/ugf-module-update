@@ -2,11 +2,24 @@
     "name": "com.ugf.module.update",
     "displayName": "UGF.Module.Update",
     "version": "0.3.0-preview",
-    "unity": "2019.3",
-    "description": "No description.",
+    "unity": "2020.2",
+    "apiCompatibility": ".NET Standard 2.0",
+    "description": "Module to manage update player loop.",
     "author": {
         "name": "Unity Game Framework",
         "url": "https://github.com/unity-game-framework"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/unity-game-framework/ugf-module-update.git"
+    },
+    "changelogUrl": "https://github.com/unity-game-framework/ugf-module-update/blob/master/changelog.md",
+    "licensesUrl": "https://github.com/unity-game-framework/ugf-module-update/blob/master/license",
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/@unity-game-framework"
+    },
+    "bintray": {
+        "registry": "https://api.bintray.com/content/unity-game-framework/public"
     },
     "dependencies": {
         "com.ugf.application": "3.0.0-preview",
