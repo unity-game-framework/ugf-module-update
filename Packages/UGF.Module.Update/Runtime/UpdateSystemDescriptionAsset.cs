@@ -16,7 +16,7 @@ namespace UGF.Module.Update.Runtime
         public string Type { get { return m_type; } set { m_type = value; } }
         public UpdateSubSystemInsertion Insertion { get { return m_insertion; } set { m_insertion = value; } }
 
-        protected override IUpdateSystemDescription OnGetDescription()
+        protected override IUpdateSystemDescription OnBuild()
         {
             var targetSystemType = System.Type.GetType(m_target, true);
             var systemType = System.Type.GetType(m_type, true);

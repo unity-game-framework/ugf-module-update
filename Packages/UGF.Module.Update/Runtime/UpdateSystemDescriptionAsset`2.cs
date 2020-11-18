@@ -10,7 +10,7 @@ namespace UGF.Module.Update.Runtime
 
         public UpdateSubSystemInsertion Insertion { get { return m_insertion; } set { m_insertion = value; } }
 
-        protected override IUpdateSystemDescription OnGetDescription()
+        protected override IUpdateSystemDescription OnBuild()
         {
             Type targetSystemType = typeof(TTarget);
             Type systemType = typeof(TType);

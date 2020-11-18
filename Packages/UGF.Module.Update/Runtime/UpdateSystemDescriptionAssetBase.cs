@@ -4,11 +4,16 @@ namespace UGF.Module.Update.Runtime
 {
     public abstract class UpdateSystemDescriptionAssetBase : ScriptableObject
     {
-        public IUpdateSystemDescription GetDescription()
+        public T Build<T>() where T : class, IUpdateSystemDescription
         {
-            return OnGetDescription();
+            return (T)OnBuild();
         }
 
-        protected abstract IUpdateSystemDescription OnGetDescription();
+        public IUpdateSystemDescription Build()
+        {
+            return OnBuild();
+        }
+
+        protected abstract IUpdateSystemDescription OnBuild();
     }
 }

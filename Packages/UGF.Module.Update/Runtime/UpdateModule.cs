@@ -30,6 +30,14 @@ namespace UGF.Module.Update.Runtime
 
                 Provider.UpdateLoop.Add(systemDescription.TargetSystemType, systemDescription.SystemType, systemDescription.Insertion);
             }
+
+            foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
+            {
+                IUpdateGroupDescription groupDescription = pair.Value;
+                IUpdateGroup group = groupDescription.CreateGroup();
+
+                Provider.Add(groupDescription.SystemType, group);
+            }
         }
 
         protected override void OnUninitialize()
@@ -41,6 +49,13 @@ namespace UGF.Module.Update.Runtime
                 IUpdateSystemDescription systemDescription = pair.Value;
 
                 Provider.UpdateLoop.Remove(systemDescription.SystemType);
+            }
+
+            foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
+            {
+                IUpdateGroupDescription groupDescription = pair.Value;
+
+                Provider.Remove(groupDescription.Name);
             }
         }
     }
