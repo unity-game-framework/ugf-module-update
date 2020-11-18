@@ -15,3 +15,6 @@ MonoBehaviour:
   m_systems:
   - m_guid: a8c471a3362e4634f8eca5f6cbb3a8e1
     m_asset: {fileID: 11400000, guid: a8c471a3362e4634f8eca5f6cbb3a8e1, type: 2}
+  m_groups:
+  - m_guid: 321acf55315b14043aac985b4237a30e
+    m_asset: {fileID: 11400000, guid: 321acf55315b14043aac985b4237a30e, type: 2}
