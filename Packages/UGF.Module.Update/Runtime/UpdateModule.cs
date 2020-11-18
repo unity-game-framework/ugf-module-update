@@ -58,5 +58,35 @@ namespace UGF.Module.Update.Runtime
                 Provider.Remove(groupDescription.Name);
             }
         }
+
+        public T GetGroup<T>(string id) where T : class, IUpdateGroup
+        {
+            return (T)GetGroup(id);
+        }
+
+        public IUpdateGroup GetGroup(string id)
+        {
+            return TryGetGroup(id, out IUpdateGroup group) ? group : throw new ArgumentException($"Group not found by the specified id: '{id}'.");
+        }
+
+        public bool TryGetGroup<T>(string id, out T group) where T : class, IUpdateGroup
+        {
+            if (TryGetGroup(id, out IUpdateGroup value))
+            {
+                group = (T)value;
+                return true;
+            }
+
+            group = default;
+            return false;
+        }
+
+        public bool TryGetGroup(string id, out IUpdateGroup group)
+        {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+
+            group = default;
+            return Description.Groups.TryGetValue(id, out IUpdateGroupDescription description) && Provider.TryGetGroup(description.Name, out group);
+        }
     }
 }
