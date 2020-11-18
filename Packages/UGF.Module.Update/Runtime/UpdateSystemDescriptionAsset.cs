@@ -1,5 +1,4 @@
-﻿using System;
-using UGF.Update.Runtime;
+﻿using UGF.Update.Runtime;
 using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
@@ -7,7 +6,9 @@ namespace UGF.Module.Update.Runtime
     [CreateAssetMenu(menuName = "UGF/Update/Update System Description", order = 2000)]
     public class UpdateSystemDescriptionAsset : UpdateSystemDescriptionAssetBase
     {
+        [UpdateSystemTypeDropdown]
         [SerializeField] private string m_target;
+        [UpdateSystemTypeDropdown]
         [SerializeField] private string m_type;
         [SerializeField] private UpdateSubSystemInsertion m_insertion = UpdateSubSystemInsertion.InsideBottom;
 
