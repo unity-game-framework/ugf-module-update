@@ -44,18 +44,18 @@ namespace UGF.Module.Update.Runtime
         {
             base.OnUninitialize();
 
-            foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
-            {
-                IUpdateSystemDescription systemDescription = pair.Value;
-
-                Provider.UpdateLoop.Remove(systemDescription.SystemType);
-            }
-
             foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
             {
                 IUpdateGroupDescription groupDescription = pair.Value;
 
                 Provider.Remove(groupDescription.Name);
+            }
+
+            foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
+            {
+                IUpdateSystemDescription systemDescription = pair.Value;
+
+                Provider.UpdateLoop.Remove(systemDescription.SystemType);
             }
         }
 
