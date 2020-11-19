@@ -12,7 +12,7 @@
       "url": "https://api.bintray.com/npm/unity-game-framework/public"
     },
     "com.ugf.customsettings": {
-      "version": "3.2.0",
+      "version": "3.3.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -21,8 +21,8 @@
       "url": "https://api.bintray.com/npm/unity-game-framework/public"
     },
     "com.ugf.editortools": {
-      "version": "1.6.0",
-      "depth": 2,
+      "version": "1.7.0",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://api.bintray.com/npm/unity-game-framework/public"
@@ -40,8 +40,9 @@
       "source": "embedded",
       "dependencies": {
         "com.ugf.application": "5.3.0",
-        "com.ugf.customsettings": "3.2.0",
-        "com.ugf.update": "5.0.0"
+        "com.ugf.customsettings": "3.3.0",
+        "com.ugf.update": "5.0.0",
+        "com.ugf.editortools": "1.7.0"
       }
     },
     "com.ugf.update": {
