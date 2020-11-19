@@ -1,4 +1,6 @@
-﻿using UGF.Update.Runtime;
+﻿using System;
+using UGF.EditorTools.Runtime.IMGUI.Types;
+using UGF.Update.Runtime;
 using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
@@ -7,19 +9,19 @@ namespace UGF.Module.Update.Runtime
     public class UpdateSystemDescriptionAsset : UpdateSystemDescriptionAssetBase
     {
         [UpdateSystemTypeDropdown]
-        [SerializeField] private string m_target;
+        [SerializeField] private TypeReference<object> m_target;
         [UpdateSystemTypeDropdown]
-        [SerializeField] private string m_type;
+        [SerializeField] private TypeReference<object> m_type;
         [SerializeField] private UpdateSubSystemInsertion m_insertion = UpdateSubSystemInsertion.InsideBottom;
 
-        public string Target { get { return m_target; } set { m_target = value; } }
-        public string Type { get { return m_type; } set { m_type = value; } }
+        public TypeReference<object> Target { get { return m_target; } set { m_target = value; } }
+        public TypeReference<object> Type { get { return m_type; } set { m_type = value; } }
         public UpdateSubSystemInsertion Insertion { get { return m_insertion; } set { m_insertion = value; } }
 
         protected override IUpdateSystemDescription OnBuild()
         {
-            var targetSystemType = System.Type.GetType(m_target, true);
-            var systemType = System.Type.GetType(m_type, true);
+            Type targetSystemType = m_target.Get();
+            Type systemType = m_type.Get();
 
             return new UpdateSystemDescription(targetSystemType, systemType, m_insertion);
         }

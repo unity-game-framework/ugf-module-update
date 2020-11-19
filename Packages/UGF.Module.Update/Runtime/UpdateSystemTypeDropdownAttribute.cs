@@ -3,10 +3,8 @@ using UGF.EditorTools.Runtime.IMGUI.Types;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateSystemTypeDropdownAttribute : TypesDropdownAttribute
+    public class UpdateSystemTypeDropdownAttribute : TypesDropdownAttributeBase
     {
-        public UpdateSystemTypeDropdownAttribute(Type targetType = null) : base(targetType ?? typeof(IUpdateSystemType))
-        {
-        }
+        public override Type TargetType { get; } = typeof(IUpdateSystemType);
     }
 }

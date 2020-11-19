@@ -1,4 +1,5 @@
 ﻿using System;
+using UGF.EditorTools.Runtime.IMGUI.Types;
 using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
@@ -8,14 +9,14 @@ namespace UGF.Module.Update.Runtime
     {
         [SerializeField] private string m_name;
         [UpdateSystemTypeDropdown]
-        [SerializeField] private string m_systemType;
+        [SerializeField] private TypeReference<object> m_systemType;
 
         public string Name { get { return m_name; } set { m_name = value; } }
-        public string SystemType { get { return m_systemType; } set { m_systemType = value; } }
+        public TypeReference<object> SystemType { get { return m_systemType; } set { m_systemType = value; } }
 
         protected override IUpdateGroupDescription OnBuild()
         {
-            var systemType = Type.GetType(m_systemType, true);
+            Type systemType = m_systemType.Get();
 
             return new UpdateGroupDescription(m_name, systemType);
         }
