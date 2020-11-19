@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: New Update Group Description Asset
   m_EditorClassIdentifier: 
   m_name: Group
-  m_systemType: UGF.Module.Update.Runtime.Tests.TestUpdateSystemType, UGF.Module.Update.Runtime.Tests,
-    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_systemType:
+    m_value: UGF.Module.Update.Runtime.Tests.TestUpdateSystemType, UGF.Module.Update.Runtime.Tests,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
