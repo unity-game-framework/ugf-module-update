@@ -1,13 +1,13 @@
+using System.Collections.Generic;
+
 namespace UGF.Module.Update.Runtime
 {
     public class UpdateModuleDescription : IUpdateModuleDescription
     {
-        public string InitializationGroupName { get; set; } = "UpdateModule.Initialization";
-        public string EarlyUpdateGroupName { get; set; } = "UpdateModule.EarlyUpdate";
-        public string FixedUpdateGroupName { get; set; } = "UpdateModule.FixedUpdate";
-        public string PreUpdateGroupName { get; set; } = "UpdateModule.PreUpdate";
-        public string UpdateGroupName { get; set; } = "UpdateModule.Update";
-        public string PreLateUpdateGroupName { get; set; } = "UpdateModule.PreLateUpdate";
-        public string PostLateUpdateGroupName { get; set; } = "UpdateModule.PostLateUpdate";
+        public Dictionary<string, IUpdateSystemDescription> Systems { get; } = new Dictionary<string, IUpdateSystemDescription>();
+        public Dictionary<string, IUpdateGroupDescription> Groups { get; } = new Dictionary<string, IUpdateGroupDescription>();
+
+        IReadOnlyDictionary<string, IUpdateSystemDescription> IUpdateModuleDescription.Systems { get { return Systems; } }
+        IReadOnlyDictionary<string, IUpdateGroupDescription> IUpdateModuleDescription.Groups { get { return Groups; } }
     }
 }
