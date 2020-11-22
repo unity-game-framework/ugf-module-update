@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.LowLevel;
 
-namespace UGF.Module.Update.Runtime.Tests
+namespace UGF.Module.Update.Editor.Tests
 {
     [CreateAssetMenu(menuName = "Tests/OutputPlayerLoopScript")]
     public class OutputPlayerLoopScript : ScriptableObject
