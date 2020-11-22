@@ -1,43 +1,42 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using UGF.Application.Runtime;
-using UGF.Module.Update.Runtime.Handlers;
 using UGF.Update.Runtime;
-using UnityEngine.PlayerLoop;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateModule : ApplicationModuleBase, IUpdateModule
+    public class UpdateModule : ApplicationModuleDescribed<UpdateModuleDescription>, IUpdateModule
     {
         public IUpdateProvider Provider { get; }
-        public IUpdateModuleDescription Description { get; }
-        public IReadOnlyDictionary<Type, IUpdateGroup> Groups { get; }
 
-        private readonly Dictionary<Type, IUpdateGroup> m_groups = new Dictionary<Type, IUpdateGroup>();
+        IUpdateModuleDescription IApplicationModuleDescribed<IUpdateModuleDescription>.Description { get { return Description; } }
 
-        public UpdateModule(IUpdateProvider provider, IUpdateModuleDescription description)
+        public UpdateModule(IApplication application, UpdateModuleDescription description) : this(application, description, new UpdateProvider())
+        {
+        }
+
+        public UpdateModule(IApplication application, UpdateModuleDescription description, IUpdateProvider provider) : base(application, description)
         {
             Provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            Description = description ?? throw new ArgumentNullException(nameof(description));
-            Groups = new ReadOnlyDictionary<Type, IUpdateGroup>(m_groups);
-
-            AddGroup<Initialization, IInitializationHandler>(Description.InitializationGroupName, item => item.OnInitialization());
-            AddGroup<EarlyUpdate, IEarlyUpdateHandler>(Description.EarlyUpdateGroupName, item => item.OnEarlyUpdate());
-            AddGroup<FixedUpdate, IFixedUpdateHandler>(Description.FixedUpdateGroupName, item => item.OnFixedUpdate());
-            AddGroup<PreUpdate, IPreUpdateHandler>(Description.PreUpdateGroupName, item => item.PreUpdate());
-            AddGroup<UnityEngine.PlayerLoop.Update, IUpdateHandler>(Description.UpdateGroupName, item => item.OnUpdate());
-            AddGroup<PreLateUpdate, IPreLateUpdateHandler>(Description.PreLateUpdateGroupName, item => item.OnPreLateUpdate());
-            AddGroup<PostLateUpdate, IPostLateUpdateHandler>(Description.PostLateUpdateGroupName, item => item.OnPostLateUpdate());
         }
 
         protected override void OnInitialize()
         {
             base.OnInitialize();
 
-            foreach (KeyValuePair<Type, IUpdateGroup> pair in m_groups)
+            foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
             {
-                Provider.Add(pair.Key, pair.Value);
+                IUpdateSystemDescription systemDescription = pair.Value;
+
+                Provider.UpdateLoop.Add(systemDescription.TargetSystemType, systemDescription.SystemType, systemDescription.Insertion);
+            }
+
+            foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
+            {
+                IUpdateGroupDescription groupDescription = pair.Value;
+                IUpdateGroup group = groupDescription.CreateGroup();
+
+                Provider.Add(groupDescription.SystemType, group);
             }
         }
 
@@ -45,51 +44,49 @@ namespace UGF.Module.Update.Runtime
         {
             base.OnUninitialize();
 
-            foreach (KeyValuePair<Type, IUpdateGroup> pair in m_groups)
+            foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
             {
-                Provider.Remove(pair.Value.Name);
+                IUpdateGroupDescription groupDescription = pair.Value;
+
+                Provider.Remove(groupDescription.Name);
+            }
+
+            foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
+            {
+                IUpdateSystemDescription systemDescription = pair.Value;
+
+                Provider.UpdateLoop.Remove(systemDescription.SystemType);
             }
         }
 
-        public void AddGroup<TSubSystem, TItem>(string name, UpdateHandler<TItem> handler)
+        public T GetGroup<T>(string id) where T : class, IUpdateGroup
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
-
-            var group = new UpdateGroup<TItem>(name, new UpdateSetHandler<TItem>(handler));
-
-            AddGroup(typeof(TSubSystem), group);
+            return (T)GetGroup(id);
         }
 
-        public void AddGroup(Type subSystemType, IUpdateGroup group)
+        public IUpdateGroup GetGroup(string id)
         {
-            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
-            if (group == null) throw new ArgumentNullException(nameof(group));
-            if (m_groups.ContainsKey(subSystemType)) throw new ArgumentException($"The group by the specified subsystem type already exists: '{subSystemType}'.", nameof(subSystemType));
+            return TryGetGroup(id, out IUpdateGroup group) ? group : throw new ArgumentException($"Group not found by the specified id: '{id}'.");
+        }
 
-            m_groups.Add(subSystemType, group);
-
-            if (IsInitialized)
+        public bool TryGetGroup<T>(string id, out T group) where T : class, IUpdateGroup
+        {
+            if (TryGetGroup(id, out IUpdateGroup value))
             {
-                Provider.Add(subSystemType, group);
-            }
-        }
-
-        public void RemoveGroup<T>()
-        {
-            RemoveGroup(typeof(T));
-        }
-
-        public void RemoveGroup(Type subSystemType)
-        {
-            if (subSystemType == null) throw new ArgumentNullException(nameof(subSystemType));
-
-            if (IsInitialized && m_groups.TryGetValue(subSystemType, out IUpdateGroup group))
-            {
-                Provider.Remove(group.Name);
+                group = (T)value;
+                return true;
             }
 
-            m_groups.Remove(subSystemType);
+            group = default;
+            return false;
+        }
+
+        public bool TryGetGroup(string id, out IUpdateGroup group)
+        {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+
+            group = default;
+            return Description.Groups.TryGetValue(id, out IUpdateGroupDescription description) && Provider.TryGetGroup(description.Name, out group);
         }
     }
 }

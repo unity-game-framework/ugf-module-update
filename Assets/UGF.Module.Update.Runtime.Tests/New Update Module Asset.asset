@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b49001ea3a134b359c5606d4edb2daad, type: 3}
+  m_Name: New Update Module Asset
+  m_EditorClassIdentifier: 
+  m_systems:
+  - m_guid: a8c471a3362e4634f8eca5f6cbb3a8e1
+    m_asset: {fileID: 11400000, guid: a8c471a3362e4634f8eca5f6cbb3a8e1, type: 2}
+  m_groups:
+  - m_guid: 321acf55315b14043aac985b4237a30e
+    m_asset: {fileID: 11400000, guid: 321acf55315b14043aac985b4237a30e, type: 2}

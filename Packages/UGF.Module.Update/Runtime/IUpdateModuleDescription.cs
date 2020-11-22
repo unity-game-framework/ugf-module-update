@@ -1,13 +1,11 @@
+using System.Collections.Generic;
+using UGF.Application.Runtime;
+
 namespace UGF.Module.Update.Runtime
 {
-    public interface IUpdateModuleDescription
+    public interface IUpdateModuleDescription : IApplicationModuleDescription
     {
-        string InitializationGroupName { get; }
-        string EarlyUpdateGroupName { get; }
-        string FixedUpdateGroupName { get; }
-        string PreUpdateGroupName { get; }
-        string UpdateGroupName { get; }
-        string PreLateUpdateGroupName { get; }
-        string PostLateUpdateGroupName { get; }
+        IReadOnlyDictionary<string, IUpdateSystemDescription> Systems { get; }
+        IReadOnlyDictionary<string, IUpdateGroupDescription> Groups { get; }
     }
 }
