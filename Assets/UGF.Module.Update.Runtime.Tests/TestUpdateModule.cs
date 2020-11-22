@@ -50,11 +50,9 @@ namespace UGF.Module.Update.Runtime.Tests
             Assert.AreEqual("Group", group.Name);
 
             var target = new Target();
-            var collection = (IUpdateCollection<IUpdateHandler>)group.Collection;
 
-            collection.Add(target);
+            group.Collection.Add(target);
 
-            yield return null;
             yield return null;
 
             Assert.AreEqual(1, target.Counter);
