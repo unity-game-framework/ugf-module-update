@@ -1,19 +1,8 @@
-﻿using UnityEngine;
+﻿using UGF.Builder.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public abstract class UpdateSystemDescriptionAssetBase : ScriptableObject
+    public abstract class UpdateSystemDescriptionAssetBase : BuilderAsset<IUpdateSystemDescription>
     {
-        public T Build<T>() where T : class, IUpdateSystemDescription
-        {
-            return (T)OnBuild();
-        }
-
-        public IUpdateSystemDescription Build()
-        {
-            return OnBuild();
-        }
-
-        protected abstract IUpdateSystemDescription OnBuild();
     }
 }

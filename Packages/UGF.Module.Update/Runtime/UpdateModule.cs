@@ -5,17 +5,16 @@ using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateModule : ApplicationModuleDescribed<UpdateModuleDescription>, IUpdateModule
+    public class UpdateModule : ApplicationModule<UpdateModuleDescription>, IUpdateModule
     {
+        public new IUpdateModuleDescription Description { get { return base.Description; } }
         public IUpdateProvider Provider { get; }
 
-        IUpdateModuleDescription IApplicationModuleDescribed<IUpdateModuleDescription>.Description { get { return Description; } }
-
-        public UpdateModule(IApplication application, UpdateModuleDescription description) : this(application, description, new UpdateProvider())
+        public UpdateModule(UpdateModuleDescription description, IApplication application) : this(description, application, new UpdateProvider())
         {
         }
 
-        public UpdateModule(IApplication application, UpdateModuleDescription description, IUpdateProvider provider) : base(application, description)
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : base(description, application)
         {
             Provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
@@ -34,7 +33,7 @@ namespace UGF.Module.Update.Runtime
             foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
             {
                 IUpdateGroupDescription groupDescription = pair.Value;
-                IUpdateGroup group = groupDescription.CreateGroup();
+                IUpdateGroup group = groupDescription.Builder.Build();
 
                 Provider.Add(groupDescription.SystemType, group);
             }

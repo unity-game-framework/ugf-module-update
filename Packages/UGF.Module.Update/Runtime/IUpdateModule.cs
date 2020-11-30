@@ -3,8 +3,9 @@ using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public interface IUpdateModule : IApplicationModuleDescribed<IUpdateModuleDescription>
+    public interface IUpdateModule : IApplicationModule
     {
+        new IUpdateModuleDescription Description { get; }
         IUpdateProvider Provider { get; }
 
         T GetGroup<T>(string id) where T : class, IUpdateGroup;
