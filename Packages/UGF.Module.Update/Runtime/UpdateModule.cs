@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using UGF.Application.Runtime;
 using UGF.Update.Runtime;
 
@@ -7,8 +9,14 @@ namespace UGF.Module.Update.Runtime
 {
     public class UpdateModule : ApplicationModule<UpdateModuleDescription>, IUpdateModule
     {
-        public new IUpdateModuleDescription Description { get { return base.Description; } }
         public IUpdateProvider Provider { get; }
+        public IReadOnlyDictionary<string, IUpdateSystemDescription> Systems { get; }
+        public IReadOnlyDictionary<string, IUpdateGroupDescribed> Groups { get; }
+
+        IUpdateModuleDescription IUpdateModule.Description { get { return Description; } }
+
+        private readonly Dictionary<string, IUpdateSystemDescription> m_systems = new Dictionary<string, IUpdateSystemDescription>();
+        private readonly Dictionary<string, IUpdateGroupDescribed> m_groups = new Dictionary<string, IUpdateGroupDescribed>();
 
         public UpdateModule(UpdateModuleDescription description, IApplication application) : this(description, application, new UpdateProvider())
         {
@@ -17,6 +25,8 @@ namespace UGF.Module.Update.Runtime
         public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : base(description, application)
         {
             Provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            Systems = new ReadOnlyDictionary<string, IUpdateSystemDescription>(m_systems);
+            Groups = new ReadOnlyDictionary<string, IUpdateGroupDescribed>(m_groups);
         }
 
         protected override void OnInitialize()
@@ -25,17 +35,14 @@ namespace UGF.Module.Update.Runtime
 
             foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
             {
-                IUpdateSystemDescription systemDescription = pair.Value;
-
-                Provider.UpdateLoop.Add(systemDescription.TargetSystemType, systemDescription.SystemType, systemDescription.Insertion);
+                AddSystem(pair.Key, pair.Value);
             }
 
-            foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
+            foreach (KeyValuePair<string, IUpdateGroupBuilder> pair in Description.Groups)
             {
-                IUpdateGroupDescription groupDescription = pair.Value;
-                IUpdateGroup group = groupDescription.Builder.Build();
+                IUpdateGroupDescribed group = pair.Value.Build();
 
-                Provider.Add(groupDescription.SystemType, group);
+                AddGroup(pair.Key, group);
             }
         }
 
@@ -43,34 +50,110 @@ namespace UGF.Module.Update.Runtime
         {
             base.OnUninitialize();
 
-            foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
+            while (m_groups.Count > 0)
             {
-                IUpdateGroupDescription groupDescription = pair.Value;
+                string id = m_groups.First().Key;
 
-                Provider.Remove(groupDescription.Name);
+                RemoveGroup(id);
             }
 
-            foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
+            while (m_systems.Count > 0)
             {
-                IUpdateSystemDescription systemDescription = pair.Value;
+                string id = m_systems.First().Key;
 
-                Provider.UpdateLoop.Remove(systemDescription.SystemType);
+                RemoveSystem(id);
             }
         }
 
-        public T GetGroup<T>(string id) where T : class, IUpdateGroup
+        public void AddSystem(string id, IUpdateSystemDescription description)
+        {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+            if (description == null) throw new ArgumentNullException(nameof(description));
+
+            Provider.UpdateLoop.Add(description.TargetSystemType, description.SystemType, description.Insertion);
+
+            m_systems.Add(id, description);
+        }
+
+        public bool RemoveSystem(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(id));
+
+            if (TryGetSystem(id, out IUpdateSystemDescription description))
+            {
+                Provider.UpdateLoop.Remove(description.SystemType);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void AddGroup(string id, IUpdateGroupDescribed group)
+        {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+            if (group == null) throw new ArgumentNullException(nameof(group));
+
+            Provider.Add(group.Description.SystemType, group);
+
+            m_groups.Add(id, group);
+        }
+
+        public bool RemoveGroup(string id)
+        {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+
+            if (TryGetGroup(id, out IUpdateGroupDescribed group))
+            {
+                Provider.Remove(group);
+
+                return m_groups.Remove(id);
+            }
+
+            return false;
+        }
+
+        public T GetSystem<T>(string id) where T : IUpdateSystemDescription
+        {
+            return (T)GetSystem(id);
+        }
+
+        public IUpdateSystemDescription GetSystem(string id)
+        {
+            return TryGetSystem(id, out IUpdateSystemDescription description) ? description : throw new ArgumentException($"Update system not found by the specified id: '{id}'.");
+        }
+
+        public bool TryGetSystem<T>(string id, out T description) where T : class, IUpdateSystemDescription
+        {
+            if (TryGetSystem(id, out IUpdateSystemDescription value))
+            {
+                description = (T)value;
+                return true;
+            }
+
+            description = default;
+            return false;
+        }
+
+        public bool TryGetSystem(string id, out IUpdateSystemDescription description)
+        {
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(id));
+
+            return m_systems.TryGetValue(id, out description);
+        }
+
+        public T GetGroup<T>(string id) where T : class, IUpdateGroupDescribed
         {
             return (T)GetGroup(id);
         }
 
-        public IUpdateGroup GetGroup(string id)
+        public IUpdateGroupDescribed GetGroup(string id)
         {
-            return TryGetGroup(id, out IUpdateGroup group) ? group : throw new ArgumentException($"Group not found by the specified id: '{id}'.");
+            return TryGetGroup(id, out IUpdateGroupDescribed group) ? group : throw new ArgumentException($"Update group not found by the specified id: '{id}'.");
         }
 
-        public bool TryGetGroup<T>(string id, out T group) where T : class, IUpdateGroup
+        public bool TryGetGroup<T>(string id, out T group) where T : class, IUpdateGroupDescribed
         {
-            if (TryGetGroup(id, out IUpdateGroup value))
+            if (TryGetGroup(id, out IUpdateGroupDescribed value))
             {
                 group = (T)value;
                 return true;
@@ -80,12 +163,11 @@ namespace UGF.Module.Update.Runtime
             return false;
         }
 
-        public bool TryGetGroup(string id, out IUpdateGroup group)
+        public bool TryGetGroup(string id, out IUpdateGroupDescribed group)
         {
-            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(id));
 
-            group = default;
-            return Description.Groups.TryGetValue(id, out IUpdateGroupDescription description) && Provider.TryGetGroup(description.Name, out group);
+            return m_groups.TryGetValue(id, out group);
         }
     }
 }

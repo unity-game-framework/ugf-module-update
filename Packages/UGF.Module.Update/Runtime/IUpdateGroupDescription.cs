@@ -6,6 +6,5 @@ namespace UGF.Module.Update.Runtime
     public interface IUpdateGroupDescription : IDescription
     {
         Type SystemType { get; }
-        IUpdateGroupBuilder Builder { get; }
     }
 }

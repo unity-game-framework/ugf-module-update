@@ -1,26 +1,18 @@
-﻿using System;
-using UGF.Builder.Runtime;
+﻿using UGF.Description.Runtime;
 using UGF.Update.Runtime;
-using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
 {
-    public abstract class UpdateGroupAssetBase : BuilderAsset<IUpdateGroup>
+    public abstract class UpdateGroupAssetBase : DescribedWithDescriptionBuilderAsset<IUpdateGroupDescribed, IUpdateGroupDescription>, IUpdateGroupBuilder
     {
-        [SerializeField] private string m_name;
-
-        public string Name { get { return m_name; } set { m_name = value; } }
-
-        protected override IUpdateGroup OnBuild()
+        protected override IUpdateGroupDescribed OnBuild(IUpdateGroupDescription description)
         {
             IUpdateCollection collection = OnBuildCollection();
 
-            if (collection == null) throw new ArgumentNullException(nameof(collection), "Update collection can not be null.");
-
-            return OnBuild(collection);
+            return OnBuild(collection, description);
         }
 
         protected abstract IUpdateCollection OnBuildCollection();
-        protected abstract IUpdateGroup OnBuild(IUpdateCollection collection);
+        protected abstract IUpdateGroupDescribed OnBuild(IUpdateCollection collection, IUpdateGroupDescription description);
     }
 }
