@@ -44,7 +44,7 @@ namespace UGF.Module.Update.Runtime.Tests
             application.Initialize();
 
             var module = application.GetModule<IUpdateModule>();
-            var group = module.GetGroup<IUpdateGroup>("4614ceca8914e5b4d8326f86aded3229");
+            var group = module.GetGroup<IUpdateGroupDescribed>("4614ceca8914e5b4d8326f86aded3229");
 
             Assert.NotNull(group);
             Assert.AreEqual("Group", group.Name);
@@ -68,7 +68,7 @@ namespace UGF.Module.Update.Runtime.Tests
                 {
                     Modules =
                     {
-                        (IApplicationModuleAsset)Resources.Load(moduleName, typeof(IApplicationModuleAsset))
+                        (IApplicationModuleBuilder)Resources.Load(moduleName, typeof(IApplicationModuleBuilder))
                     }
                 }
             });
