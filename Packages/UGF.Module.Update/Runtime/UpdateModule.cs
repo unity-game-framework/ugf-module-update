@@ -82,7 +82,8 @@ namespace UGF.Module.Update.Runtime
             if (TryGetSystem(id, out IUpdateSystemDescription description))
             {
                 Provider.UpdateLoop.Remove(description.SystemType);
-                return true;
+
+                return m_systems.Remove(id);
             }
 
             return false;
