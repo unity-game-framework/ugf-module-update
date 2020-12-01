@@ -4,7 +4,7 @@ using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateGroupDescribed<TItem, TDescription> : UpdateGroup<TItem>, IUpdateGroupDescribed, IDescribed<TDescription>
+    public class UpdateGroupDescribed<TItem, TDescription> : UpdateGroup<TItem>, IUpdateGroupDescribed
         where TItem : class
         where TDescription : class, IUpdateGroupDescription
     {
