@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
 {
-    [CreateAssetMenu(menuName = "UGF/Update/Update Module", order = 2000)]
+    [CreateAssetMenu(menuName = "Unity Game Framework/Update/Update Module", order = 2000)]
     public class UpdateModuleAsset : ApplicationModuleAsset<IUpdateModule, UpdateModuleDescription>
     {
         [SerializeField] private List<AssetReference<UpdateSystemDescriptionAssetBase>> m_systems = new List<AssetReference<UpdateSystemDescriptionAssetBase>>();

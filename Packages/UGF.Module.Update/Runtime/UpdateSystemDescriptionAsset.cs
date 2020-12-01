@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
 {
-    [CreateAssetMenu(menuName = "UGF/Update/Update System Description", order = 2000)]
+    [CreateAssetMenu(menuName = "Unity Game Framework/Update/Update System Description", order = 2000)]
     public class UpdateSystemDescriptionAsset : UpdateSystemDescriptionAssetBase
     {
         [UpdateSystemTypeDropdown]
