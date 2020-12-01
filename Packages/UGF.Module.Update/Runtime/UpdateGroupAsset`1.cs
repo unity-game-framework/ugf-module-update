@@ -6,7 +6,7 @@ using UnityEngine;
 namespace UGF.Module.Update.Runtime
 {
     public abstract class UpdateGroupAsset<TItem, TDescription> : UpdateGroupAssetBase
-        where TItem : class, IUpdateHandler
+        where TItem : class
         where TDescription : class, IUpdateGroupDescription
     {
         [SerializeField] private string m_name;
@@ -21,11 +21,6 @@ namespace UGF.Module.Update.Runtime
             Type type = m_systemType.Get();
 
             return new UpdateGroupDescription(type);
-        }
-
-        protected override IUpdateCollection OnBuildCollection()
-        {
-            return new UpdateSet<TItem>();
         }
 
         protected override IUpdateGroupDescribed OnBuild(IUpdateCollection collection, IUpdateGroupDescription description)
