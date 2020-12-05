@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using UGF.Application.Runtime;
+using UGF.Logs.Runtime;
 using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
@@ -33,6 +34,12 @@ namespace UGF.Module.Update.Runtime
         {
             base.OnInitialize();
 
+            Log.Debug("Update module initialize", new
+            {
+                systems = Description.Systems.Count,
+                groups = Description.Groups.Count
+            });
+
             foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
             {
                 AddSystem(pair.Key, pair.Value);
@@ -49,6 +56,12 @@ namespace UGF.Module.Update.Runtime
         protected override void OnUninitialize()
         {
             base.OnUninitialize();
+
+            Log.Debug("Update module uninitialize", new
+            {
+                systems = m_systems.Count,
+                groups = m_groups.Count
+            });
 
             while (m_groups.Count > 0)
             {
@@ -73,6 +86,14 @@ namespace UGF.Module.Update.Runtime
             Provider.UpdateLoop.Add(description.TargetSystemType, description.SystemType, description.Insertion);
 
             m_systems.Add(id, description);
+
+            Log.Debug("Add update system", new
+            {
+                id,
+                description.TargetSystemType,
+                description.SystemType,
+                description.Insertion
+            });
         }
 
         public bool RemoveSystem(string id)
@@ -82,6 +103,14 @@ namespace UGF.Module.Update.Runtime
             if (TryGetSystem(id, out IUpdateSystemDescription description))
             {
                 Provider.UpdateLoop.Remove(description.SystemType);
+
+                Log.Debug("Remove update system", new
+                {
+                    id,
+                    description.TargetSystemType,
+                    description.SystemType,
+                    description.Insertion
+                });
 
                 return m_systems.Remove(id);
             }
@@ -97,6 +126,13 @@ namespace UGF.Module.Update.Runtime
             Provider.Add(group.Description.SystemType, group);
 
             m_groups.Add(id, group);
+
+            Log.Debug("Add update group", new
+            {
+                id,
+                group.Name,
+                group.Description.SystemType
+            });
         }
 
         public bool RemoveGroup(string id)
@@ -106,6 +142,13 @@ namespace UGF.Module.Update.Runtime
             if (TryGetGroup(id, out IUpdateGroupDescribed group))
             {
                 Provider.Remove(group);
+
+                Log.Debug("Remove update group", new
+                {
+                    id,
+                    group.Name,
+                    group.Description.SystemType
+                });
 
                 return m_groups.Remove(id);
             }
