@@ -4,16 +4,15 @@ UGF.Module.Update
 
 ## Info
 
-- **Version**: `1.0.0`
+- **Version**: `2.0.0`
 - **Unity**: `2020.2`
 - **API Compatibility Level**: `.NET Standard 2.0`
 
 ### Dependencies
 
-- `com.ugf.application`: `5.3.0`
-- `com.ugf.customsettings`: `3.3.0`
-- `com.ugf.update`: `5.1.0`
-- `com.ugf.editortools`: `1.7.0`
+- `com.ugf.application`: `6.0.0`
+- `com.ugf.update`: `5.2.1`
+- `com.ugf.logs`: `4.1.0`
 
 
 ### Description
