@@ -1,14 +1,10 @@
 ﻿using System;
-using UGF.Update.Runtime;
+using UGF.Description.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public interface IUpdateGroupDescription
+    public interface IUpdateGroupDescription : IDescription
     {
-        string Name { get; }
         Type SystemType { get; }
-
-        T CreateGroup<T>() where T : class, IUpdateGroup;
-        IUpdateGroup CreateGroup();
     }
 }
