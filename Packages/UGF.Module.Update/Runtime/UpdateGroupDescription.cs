@@ -1,22 +1,15 @@
 ﻿using System;
-using UGF.Update.Runtime;
+using UGF.Description.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateGroupDescription : UpdateGroupDescriptionBase
+    public class UpdateGroupDescription : DescriptionBase, IUpdateGroupDescription
     {
-        public UpdateGroupDescription(string name, Type systemType) : base(name, systemType)
-        {
-        }
+        public Type SystemType { get; }
 
-        protected override IUpdateGroup OnCreateGroup(string name, IUpdateCollection collection)
+        public UpdateGroupDescription(Type systemType)
         {
-            return new UpdateGroup(name, collection);
-        }
-
-        protected override IUpdateCollection OnCreateUpdateCollection()
-        {
-            return new UpdateSet<IUpdateHandler>();
+            SystemType = systemType ?? throw new ArgumentNullException(nameof(systemType));
         }
     }
 }

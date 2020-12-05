@@ -1,4 +1,3 @@
-using UGF.Application.Editor;
 using UGF.EditorTools.Editor.IMGUI.AssetReferences;
 using UGF.EditorTools.Editor.IMGUI.Scopes;
 using UGF.Module.Update.Runtime;
@@ -7,7 +6,7 @@ using UnityEditor;
 namespace UGF.Module.Update.Editor
 {
     [CustomEditor(typeof(UpdateModuleAsset), true)]
-    internal class UpdateModuleAssetEditor : ApplicationModuleAssetEditor
+    internal class UpdateModuleAssetEditor : UnityEditor.Editor
     {
         private SerializedProperty m_propertyScript;
         private AssetReferenceListDrawer m_listSystems;
@@ -41,8 +40,6 @@ namespace UGF.Module.Update.Editor
                 m_listSystems.DrawGUILayout();
                 m_listGroups.DrawGUILayout();
             }
-
-            DrawModuleRegisterTypeInfo();
         }
     }
 }

@@ -1,42 +1,55 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using UGF.Application.Runtime;
+using UGF.Logs.Runtime;
 using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateModule : ApplicationModuleDescribed<UpdateModuleDescription>, IUpdateModule
+    public class UpdateModule : ApplicationModule<UpdateModuleDescription>, IUpdateModule
     {
         public IUpdateProvider Provider { get; }
+        public IReadOnlyDictionary<string, IUpdateSystemDescription> Systems { get; }
+        public IReadOnlyDictionary<string, IUpdateGroupDescribed> Groups { get; }
 
-        IUpdateModuleDescription IApplicationModuleDescribed<IUpdateModuleDescription>.Description { get { return Description; } }
+        IUpdateModuleDescription IUpdateModule.Description { get { return Description; } }
 
-        public UpdateModule(IApplication application, UpdateModuleDescription description) : this(application, description, new UpdateProvider())
+        private readonly Dictionary<string, IUpdateSystemDescription> m_systems = new Dictionary<string, IUpdateSystemDescription>();
+        private readonly Dictionary<string, IUpdateGroupDescribed> m_groups = new Dictionary<string, IUpdateGroupDescribed>();
+
+        public UpdateModule(UpdateModuleDescription description, IApplication application) : this(description, application, new UpdateProvider())
         {
         }
 
-        public UpdateModule(IApplication application, UpdateModuleDescription description, IUpdateProvider provider) : base(application, description)
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : base(description, application)
         {
             Provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            Systems = new ReadOnlyDictionary<string, IUpdateSystemDescription>(m_systems);
+            Groups = new ReadOnlyDictionary<string, IUpdateGroupDescribed>(m_groups);
         }
 
         protected override void OnInitialize()
         {
             base.OnInitialize();
 
+            Log.Debug("Update module initialize", new
+            {
+                systems = Description.Systems.Count,
+                groups = Description.Groups.Count
+            });
+
             foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
             {
-                IUpdateSystemDescription systemDescription = pair.Value;
-
-                Provider.UpdateLoop.Add(systemDescription.TargetSystemType, systemDescription.SystemType, systemDescription.Insertion);
+                AddSystem(pair.Key, pair.Value);
             }
 
-            foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
+            foreach (KeyValuePair<string, IUpdateGroupBuilder> pair in Description.Groups)
             {
-                IUpdateGroupDescription groupDescription = pair.Value;
-                IUpdateGroup group = groupDescription.CreateGroup();
+                IUpdateGroupDescribed group = pair.Value.Build();
 
-                Provider.Add(groupDescription.SystemType, group);
+                AddGroup(pair.Key, group);
             }
         }
 
@@ -44,34 +57,147 @@ namespace UGF.Module.Update.Runtime
         {
             base.OnUninitialize();
 
-            foreach (KeyValuePair<string, IUpdateGroupDescription> pair in Description.Groups)
+            Log.Debug("Update module uninitialize", new
             {
-                IUpdateGroupDescription groupDescription = pair.Value;
+                systems = m_systems.Count,
+                groups = m_groups.Count
+            });
 
-                Provider.Remove(groupDescription.Name);
+            while (m_groups.Count > 0)
+            {
+                string id = m_groups.First().Key;
+
+                RemoveGroup(id);
             }
 
-            foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
+            while (m_systems.Count > 0)
             {
-                IUpdateSystemDescription systemDescription = pair.Value;
+                string id = m_systems.First().Key;
 
-                Provider.UpdateLoop.Remove(systemDescription.SystemType);
+                RemoveSystem(id);
             }
         }
 
-        public T GetGroup<T>(string id) where T : class, IUpdateGroup
+        public void AddSystem(string id, IUpdateSystemDescription description)
+        {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+            if (description == null) throw new ArgumentNullException(nameof(description));
+
+            Provider.UpdateLoop.Add(description.TargetSystemType, description.SystemType, description.Insertion);
+
+            m_systems.Add(id, description);
+
+            Log.Debug("Add update system", new
+            {
+                id,
+                description.TargetSystemType,
+                description.SystemType,
+                description.Insertion
+            });
+        }
+
+        public bool RemoveSystem(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(id));
+
+            if (TryGetSystem(id, out IUpdateSystemDescription description))
+            {
+                Provider.UpdateLoop.Remove(description.SystemType);
+
+                Log.Debug("Remove update system", new
+                {
+                    id,
+                    description.TargetSystemType,
+                    description.SystemType,
+                    description.Insertion
+                });
+
+                return m_systems.Remove(id);
+            }
+
+            return false;
+        }
+
+        public void AddGroup(string id, IUpdateGroupDescribed group)
+        {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+            if (group == null) throw new ArgumentNullException(nameof(group));
+
+            Provider.Add(group.Description.SystemType, group);
+
+            m_groups.Add(id, group);
+
+            Log.Debug("Add update group", new
+            {
+                id,
+                group.Name,
+                group.Description.SystemType
+            });
+        }
+
+        public bool RemoveGroup(string id)
+        {
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+
+            if (TryGetGroup(id, out IUpdateGroupDescribed group))
+            {
+                Provider.Remove(group);
+
+                Log.Debug("Remove update group", new
+                {
+                    id,
+                    group.Name,
+                    group.Description.SystemType
+                });
+
+                return m_groups.Remove(id);
+            }
+
+            return false;
+        }
+
+        public T GetSystem<T>(string id) where T : IUpdateSystemDescription
+        {
+            return (T)GetSystem(id);
+        }
+
+        public IUpdateSystemDescription GetSystem(string id)
+        {
+            return TryGetSystem(id, out IUpdateSystemDescription description) ? description : throw new ArgumentException($"Update system not found by the specified id: '{id}'.");
+        }
+
+        public bool TryGetSystem<T>(string id, out T description) where T : class, IUpdateSystemDescription
+        {
+            if (TryGetSystem(id, out IUpdateSystemDescription value))
+            {
+                description = (T)value;
+                return true;
+            }
+
+            description = default;
+            return false;
+        }
+
+        public bool TryGetSystem(string id, out IUpdateSystemDescription description)
+        {
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(id));
+
+            return m_systems.TryGetValue(id, out description);
+        }
+
+        public T GetGroup<T>(string id) where T : class, IUpdateGroupDescribed
         {
             return (T)GetGroup(id);
         }
 
-        public IUpdateGroup GetGroup(string id)
+        public IUpdateGroupDescribed GetGroup(string id)
         {
-            return TryGetGroup(id, out IUpdateGroup group) ? group : throw new ArgumentException($"Group not found by the specified id: '{id}'.");
+            return TryGetGroup(id, out IUpdateGroupDescribed group) ? group : throw new ArgumentException($"Update group not found by the specified id: '{id}'.");
         }
 
-        public bool TryGetGroup<T>(string id, out T group) where T : class, IUpdateGroup
+        public bool TryGetGroup<T>(string id, out T group) where T : class, IUpdateGroupDescribed
         {
-            if (TryGetGroup(id, out IUpdateGroup value))
+            if (TryGetGroup(id, out IUpdateGroupDescribed value))
             {
                 group = (T)value;
                 return true;
@@ -81,12 +207,11 @@ namespace UGF.Module.Update.Runtime
             return false;
         }
 
-        public bool TryGetGroup(string id, out IUpdateGroup group)
+        public bool TryGetGroup(string id, out IUpdateGroupDescribed group)
         {
-            if (string.IsNullOrEmpty(id)) throw new ArgumentException("Value cannot be null or empty.", nameof(id));
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(id));
 
-            group = default;
-            return Description.Groups.TryGetValue(id, out IUpdateGroupDescription description) && Provider.TryGetGroup(description.Name, out group);
+            return m_groups.TryGetValue(id, out group);
         }
     }
 }

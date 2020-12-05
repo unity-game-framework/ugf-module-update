@@ -6,6 +6,6 @@ namespace UGF.Module.Update.Runtime
     public interface IUpdateModuleDescription : IApplicationModuleDescription
     {
         IReadOnlyDictionary<string, IUpdateSystemDescription> Systems { get; }
-        IReadOnlyDictionary<string, IUpdateGroupDescription> Groups { get; }
+        IReadOnlyDictionary<string, IUpdateGroupBuilder> Groups { get; }
     }
 }

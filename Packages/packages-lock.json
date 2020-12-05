@@ -1,37 +1,71 @@
 {
   "dependencies": {
     "com.ugf.application": {
-      "version": "5.3.0",
+      "version": "6.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.ugf.initialize": "2.4.0",
-        "com.ugf.customsettings": "3.0.1",
-        "com.ugf.editortools": "1.5.1"
+        "com.ugf.initialize": "2.6.0",
+        "com.ugf.description": "2.0.0",
+        "com.ugf.customsettings": "3.4.0"
       },
       "url": "https://api.bintray.com/npm/unity-game-framework/public"
     },
+    "com.ugf.builder": {
+      "version": "2.0.0",
+      "depth": 3,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://api.bintray.com/npm/unity-game-framework/public"
+    },
     "com.ugf.customsettings": {
-      "version": "3.3.0",
-      "depth": 1,
+      "version": "3.4.0",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
-        "com.ugf.editortools": "1.6.0"
+        "com.ugf.editortools": "1.7.0"
+      },
+      "url": "https://api.bintray.com/npm/unity-game-framework/public"
+    },
+    "com.ugf.defines": {
+      "version": "2.1.0",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.ugf.customsettings": "3.4.0"
+      },
+      "url": "https://api.bintray.com/npm/unity-game-framework/public"
+    },
+    "com.ugf.description": {
+      "version": "2.0.0",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.ugf.builder": "2.0.0"
       },
       "url": "https://api.bintray.com/npm/unity-game-framework/public"
     },
     "com.ugf.editortools": {
       "version": "1.7.0",
-      "depth": 1,
+      "depth": 3,
       "source": "registry",
       "dependencies": {},
       "url": "https://api.bintray.com/npm/unity-game-framework/public"
     },
     "com.ugf.initialize": {
-      "version": "2.4.0",
+      "version": "2.6.0",
       "depth": 2,
       "source": "registry",
       "dependencies": {},
+      "url": "https://api.bintray.com/npm/unity-game-framework/public"
+    },
+    "com.ugf.logs": {
+      "version": "4.1.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.ugf.defines": "2.1.0"
+      },
       "url": "https://api.bintray.com/npm/unity-game-framework/public"
     },
     "com.ugf.module.update": {
@@ -39,14 +73,13 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.ugf.application": "5.3.0",
-        "com.ugf.customsettings": "3.3.0",
-        "com.ugf.update": "5.1.0",
-        "com.ugf.editortools": "1.7.0"
+        "com.ugf.application": "6.0.0",
+        "com.ugf.update": "5.2.1",
+        "com.ugf.logs": "4.1.0"
       }
     },
     "com.ugf.update": {
-      "version": "5.1.0",
+      "version": "5.2.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -60,7 +93,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.2",
+      "version": "3.0.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
