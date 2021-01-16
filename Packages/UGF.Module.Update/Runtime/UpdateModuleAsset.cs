@@ -16,7 +16,10 @@ namespace UGF.Module.Update.Runtime
 
         protected override IApplicationModuleDescription OnBuildDescription()
         {
-            var description = new UpdateModuleDescription(typeof(IUpdateModule));
+            var description = new UpdateModuleDescription
+            {
+                RegisterType = typeof(IUpdateModule)
+            };
 
             for (int i = 0; i < m_systems.Count; i++)
             {
