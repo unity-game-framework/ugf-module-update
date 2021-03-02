@@ -48,5 +48,15 @@ namespace UGF.Module.Update.Runtime
 
             return base.OnRemove(id, entry);
         }
+
+        protected override void OnClear()
+        {
+            foreach (KeyValuePair<string, IUpdateSystemDescription> pair in this)
+            {
+                UpdateProvider.UpdateLoop.Remove(pair.Value.SystemType);
+            }
+
+            base.OnClear();
+        }
     }
 }
