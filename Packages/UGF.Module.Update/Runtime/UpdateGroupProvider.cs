@@ -53,7 +53,7 @@ namespace UGF.Module.Update.Runtime
         {
             foreach (KeyValuePair<string, IUpdateGroup> pair in this)
             {
-                UpdateProvider.Remove(pair.Key);
+                UpdateProvider.Remove(pair.Value);
             }
 
             base.OnClear();
