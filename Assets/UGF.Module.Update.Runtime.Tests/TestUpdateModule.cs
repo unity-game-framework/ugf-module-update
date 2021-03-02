@@ -29,11 +29,11 @@ namespace UGF.Module.Update.Runtime.Tests
             var module = application.GetModule<IUpdateModule>();
 
             Assert.NotNull(module);
-            Assert.AreEqual(module.Provider.Groups.Count, 1);
+            Assert.AreEqual(1, module.Provider.Groups.Count);
 
             application.Uninitialize();
 
-            Assert.AreEqual(module.Provider.Groups.Count, 0);
+            Assert.AreEqual(0, module.Provider.Groups.Count);
         }
 
         [UnityTest]
