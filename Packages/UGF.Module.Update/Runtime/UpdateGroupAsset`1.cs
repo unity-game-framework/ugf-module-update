@@ -23,12 +23,12 @@ namespace UGF.Module.Update.Runtime
             return new UpdateGroupDescription(type);
         }
 
-        protected override IUpdateGroupDescribed OnBuild(IUpdateCollection collection, IUpdateGroupDescription description)
+        protected override IUpdateGroup OnBuild(IUpdateCollection collection, IUpdateGroupDescription description)
         {
             return OnBuild((IUpdateCollection<TItem>)collection, (TDescription)description);
         }
 
-        protected virtual IUpdateGroupDescribed OnBuild(IUpdateCollection<TItem> collection, TDescription description)
+        protected virtual IUpdateGroup OnBuild(IUpdateCollection<TItem> collection, TDescription description)
         {
             return new UpdateGroupDescribed<TItem, TDescription>(m_name, collection, description);
         }
