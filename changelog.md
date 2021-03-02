@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0-preview](https://github.com/unity-game-framework/ugf-module-update/releases/tag/3.0.0-preview) - 2021-03-02  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-module-update/milestone/7?closed=1)  
+    
+
+### Changed
+
+- Rework to use providers for systems and groups in module ([#24](https://github.com/unity-game-framework/ugf-module-update/pull/24))  
+    - Update `IUpdateModule` to replace `Systems` and `Groups` dictionaries with `IProvider` interfaces.
+    - Add `UpdateGroupProvider` and `UpdateSystemDescriptionProvider` provider classes with update system registration.
+    - Remove `Add`, `Remove`, `Get`, `TryGet` and etc manage methods from `IUpdateModule` and `UpdateModule` classes.
+- Update to Unity 2021 and Application dependency ([#22](https://github.com/unity-game-framework/ugf-module-update/pull/22))  
+    - Update project to _Unity_ of `2021.1` version.
+    - Update dependencies: `com.ugf.application` to `8.0.0-preview.4` version.
+    - Update package publish registry.
+    - Remove deprecated code.
+
+### Removed
+
+- Remove IUpdateGroupDescribed interface ([#23](https://github.com/unity-game-framework/ugf-module-update/pull/23))  
+    - Remove `IUpdateGroupDescribed` interface.
+    - Change `IUpdateModule`, `UpdateGroupAssetBase` and `UpdateGroupDescribed<TItem, TDescription>` classes to work with `IUpdateGroup` directly.
+
 ## [2.1.0](https://github.com/unity-game-framework/ugf-module-update/releases/tag/2.1.0) - 2021-01-16  
 
 ### Release Notes
