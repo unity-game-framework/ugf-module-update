@@ -14,19 +14,19 @@ namespace UGF.Module.Update.Runtime
 
             if (description == null) throw new ArgumentNullException(nameof(description), "Description can not be null.");
 
-            return OnBuild(description);
+            return OnBuild(description, arguments);
         }
 
-        protected virtual IUpdateGroup OnBuild(IUpdateGroupDescription description)
+        protected virtual IUpdateGroup OnBuild(IUpdateGroupDescription description, IApplication application)
         {
             IUpdateCollection collection = OnBuildCollection();
 
-            return OnBuild(collection, description);
+            return OnBuild(collection, description, application);
         }
 
         protected abstract IUpdateGroupDescription OnBuildDescription();
         protected abstract IUpdateCollection OnBuildCollection();
-        protected abstract IUpdateGroup OnBuild(IUpdateCollection collection, IUpdateGroupDescription description);
+        protected abstract IUpdateGroup OnBuild(IUpdateCollection collection, IUpdateGroupDescription description, IApplication application);
 
         T IBuilder<IDescription>.Build<T>()
         {

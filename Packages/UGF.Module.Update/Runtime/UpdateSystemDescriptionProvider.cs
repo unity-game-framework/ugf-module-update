@@ -8,20 +8,20 @@ namespace UGF.Module.Update.Runtime
 {
     public class UpdateSystemDescriptionProvider : Provider<string, IUpdateSystemDescription>
     {
-        public IUpdateProvider UpdateProvider { get; }
+        public IUpdateLoop UpdateLoop { get; }
 
-        public UpdateSystemDescriptionProvider(IUpdateProvider updateProvider) : this(updateProvider, EqualityComparer<string>.Default)
+        public UpdateSystemDescriptionProvider(IUpdateLoop updateLoop) : this(updateLoop, EqualityComparer<string>.Default)
         {
         }
 
-        public UpdateSystemDescriptionProvider(IUpdateProvider updateProvider, IEqualityComparer<string> comparer) : base(comparer)
+        public UpdateSystemDescriptionProvider(IUpdateLoop updateLoop, IEqualityComparer<string> comparer) : base(comparer)
         {
-            UpdateProvider = updateProvider ?? throw new ArgumentNullException(nameof(updateProvider));
+            UpdateLoop = updateLoop ?? throw new ArgumentNullException(nameof(updateLoop));
         }
 
         protected override void OnAdd(string id, IUpdateSystemDescription entry)
         {
-            UpdateProvider.UpdateLoop.Add(entry.TargetSystemType, entry.SystemType, entry.Insertion);
+            UpdateLoop.Add(entry.TargetSystemType, entry.SystemType, entry.Insertion);
 
             base.OnAdd(id, entry);
 
@@ -36,7 +36,7 @@ namespace UGF.Module.Update.Runtime
 
         protected override bool OnRemove(string id, IUpdateSystemDescription entry)
         {
-            UpdateProvider.UpdateLoop.Remove(entry.SystemType);
+            UpdateLoop.Remove(entry.SystemType);
 
             Log.Debug("Remove update system", new
             {
@@ -53,7 +53,7 @@ namespace UGF.Module.Update.Runtime
         {
             foreach (KeyValuePair<string, IUpdateSystemDescription> pair in this)
             {
-                UpdateProvider.UpdateLoop.Remove(pair.Value.SystemType);
+                UpdateLoop.Remove(pair.Value.SystemType);
             }
 
             base.OnClear();

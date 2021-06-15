@@ -19,7 +19,7 @@ namespace UGF.Module.Update.Runtime
         {
         }
 
-        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new UpdateSystemDescriptionProvider(provider), new UpdateGroupProvider(provider))
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new UpdateSystemDescriptionProvider(provider.UpdateLoop), new UpdateGroupProvider(provider))
         {
         }
 
