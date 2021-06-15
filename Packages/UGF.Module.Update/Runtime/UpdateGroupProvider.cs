@@ -31,7 +31,6 @@ namespace UGF.Module.Update.Runtime
             Log.Debug("Add update group", new
             {
                 id,
-                entry.Name,
                 described.Description.SystemType
             });
         }
@@ -42,8 +41,7 @@ namespace UGF.Module.Update.Runtime
 
             Log.Debug("Remove update group", new
             {
-                id,
-                entry.Name
+                id
             });
 
             return base.OnRemove(id, entry);

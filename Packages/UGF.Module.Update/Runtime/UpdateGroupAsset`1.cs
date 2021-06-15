@@ -9,11 +9,9 @@ namespace UGF.Module.Update.Runtime
         where TItem : class
         where TDescription : class, IUpdateGroupDescription
     {
-        [SerializeField] private string m_name;
         [UpdateSystemTypeDropdown]
         [SerializeField] private TypeReference<object> m_systemType;
 
-        public string Name { get { return m_name; } set { m_name = value; } }
         public TypeReference<object> SystemType { get { return m_systemType; } set { m_systemType = value; } }
 
         protected override IUpdateGroupDescription OnBuildDescription()
@@ -30,7 +28,7 @@ namespace UGF.Module.Update.Runtime
 
         protected virtual IUpdateGroup OnBuild(IUpdateCollection<TItem> collection, TDescription description)
         {
-            return new UpdateGroupDescribed<TItem, TDescription>(m_name, collection, description);
+            return new UpdateGroupDescribed<TItem, TDescription>(collection, description);
         }
     }
 }
