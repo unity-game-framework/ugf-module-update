@@ -24,7 +24,7 @@ namespace UGF.Module.Update.Runtime
         {
             if (!(entry is IDescribed<IUpdateGroupDescription> described)) throw new ArgumentException("Entry must be of 'IDescribed<IUpdateGroupDescription>' type.", nameof(entry));
 
-            UpdateProvider.Add(described.Description.SystemType, entry);
+            UpdateProvider.AddWithSubSystemType(entry, described.Description.SystemType);
 
             base.OnAdd(id, entry);
 
