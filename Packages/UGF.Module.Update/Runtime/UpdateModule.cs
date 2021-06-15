@@ -47,7 +47,7 @@ namespace UGF.Module.Update.Runtime
 
             foreach (KeyValuePair<string, IUpdateGroupBuilder> pair in Description.Groups)
             {
-                IUpdateGroup group = pair.Value.Build();
+                IUpdateGroup group = pair.Value.Build(Application);
 
                 Groups.Add(pair.Key, group);
             }

@@ -1,13 +1,14 @@
 ﻿using System;
+using UGF.Application.Runtime;
 using UGF.Builder.Runtime;
 using UGF.Description.Runtime;
 using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public abstract class UpdateGroupAssetBase : BuilderAsset<IUpdateGroup>, IUpdateGroupBuilder, IDescriptionBuilder
+    public abstract class UpdateGroupAssetBase : BuilderAsset<IApplication, IUpdateGroup>, IUpdateGroupBuilder, IDescriptionBuilder
     {
-        protected override IUpdateGroup OnBuild()
+        protected override IUpdateGroup OnBuild(IApplication arguments)
         {
             IUpdateGroupDescription description = OnBuildDescription();
 
