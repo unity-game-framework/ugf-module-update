@@ -38,7 +38,9 @@ namespace UGF.Module.Update.Runtime
             Log.Debug("Update module initialize", new
             {
                 systems = Description.Systems.Count,
-                groups = Description.Groups.Count
+                groups = Description.Groups.Count,
+                subGroups = Description.SubGroups.Count,
+                entries = Description.Entries.Count
             });
 
             foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)

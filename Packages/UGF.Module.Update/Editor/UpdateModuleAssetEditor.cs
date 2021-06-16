@@ -11,21 +11,29 @@ namespace UGF.Module.Update.Editor
         private SerializedProperty m_propertyScript;
         private AssetReferenceListDrawer m_listSystems;
         private AssetReferenceListDrawer m_listGroups;
+        private UpdateModuleAssetBuilderEntryListDrawer m_listSubGroups;
+        private UpdateModuleAssetBuilderEntryListDrawer m_listEntries;
 
         private void OnEnable()
         {
             m_propertyScript = serializedObject.FindProperty("m_Script");
             m_listSystems = new AssetReferenceListDrawer(serializedObject.FindProperty("m_systems"));
             m_listGroups = new AssetReferenceListDrawer(serializedObject.FindProperty("m_groups"));
+            m_listSubGroups = new UpdateModuleAssetBuilderEntryListDrawer(serializedObject.FindProperty("m_subGroups"));
+            m_listEntries = new UpdateModuleAssetBuilderEntryListDrawer(serializedObject.FindProperty("m_entries"));
 
             m_listSystems.Enable();
             m_listGroups.Enable();
+            m_listSubGroups.Enable();
+            m_listEntries.Enable();
         }
 
         private void OnDisable()
         {
             m_listSystems.Disable();
             m_listGroups.Disable();
+            m_listSubGroups.Disable();
+            m_listEntries.Disable();
         }
 
         public override void OnInspectorGUI()
@@ -39,6 +47,8 @@ namespace UGF.Module.Update.Editor
 
                 m_listSystems.DrawGUILayout();
                 m_listGroups.DrawGUILayout();
+                m_listSubGroups.DrawGUILayout();
+                m_listEntries.DrawGUILayout();
             }
         }
     }
