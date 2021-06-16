@@ -29,11 +29,11 @@ namespace UGF.Module.Update.Runtime.Tests
             var module = application.GetModule<IUpdateModule>();
 
             Assert.NotNull(module);
-            Assert.AreEqual(1, module.Provider.Groups.Count);
+            Assert.AreEqual(1, module.Provider.Entries.Count);
 
             application.Uninitialize();
 
-            Assert.AreEqual(0, module.Provider.Groups.Count);
+            Assert.AreEqual(0, module.Provider.Entries.Count);
         }
 
         [UnityTest]
@@ -47,7 +47,6 @@ namespace UGF.Module.Update.Runtime.Tests
             var group = module.Groups.Get<IUpdateGroup>("4614ceca8914e5b4d8326f86aded3229");
 
             Assert.NotNull(group);
-            Assert.AreEqual("Group", group.Name);
 
             var target = new Target();
 

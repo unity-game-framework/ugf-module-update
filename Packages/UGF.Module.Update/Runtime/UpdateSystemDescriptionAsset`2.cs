@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateSystemDescriptionAsset<TTarget, TType> : UpdateSystemDescriptionAssetBase
+    public class UpdateSystemDescriptionAsset<TTarget, TType> : UpdateSystemDescriptionAsset
     {
         [SerializeField] private UpdateSubSystemInsertion m_insertion = UpdateSubSystemInsertion.InsideBottom;
 

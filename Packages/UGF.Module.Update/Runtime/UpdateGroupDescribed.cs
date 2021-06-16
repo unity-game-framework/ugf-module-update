@@ -12,7 +12,11 @@ namespace UGF.Module.Update.Runtime
 
         IUpdateGroupDescription IDescribed<IUpdateGroupDescription>.Description { get { return Description; } }
 
-        public UpdateGroupDescribed(string name, IUpdateCollection<TItem> collection, TDescription description) : base(name, collection)
+        public UpdateGroupDescribed(IUpdateCollection<TItem> collection, TDescription description) : this(collection, new UpdateListHandler<IUpdateGroup>(item => item.Update()), description)
+        {
+        }
+
+        public UpdateGroupDescribed(IUpdateCollection<TItem> collection, IUpdateCollection<IUpdateGroup> subGroups, TDescription description) : base(collection, subGroups)
         {
             Description = description ?? throw new ArgumentNullException(nameof(description));
         }

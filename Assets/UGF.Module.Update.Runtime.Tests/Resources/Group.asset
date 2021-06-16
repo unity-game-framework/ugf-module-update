@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ada8f43f7184bc99ae625dd1b6df012, type: 3}
   m_Name: Group
   m_EditorClassIdentifier: 
-  m_name: Group
   m_systemType:
     m_value: UGF.Module.Update.Runtime.Tests.TestUpdateSystemType, UGF.Module.Update.Runtime.Tests,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null

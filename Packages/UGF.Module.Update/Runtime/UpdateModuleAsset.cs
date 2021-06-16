@@ -8,11 +8,11 @@ namespace UGF.Module.Update.Runtime
     [CreateAssetMenu(menuName = "Unity Game Framework/Update/Update Module", order = 2000)]
     public class UpdateModuleAsset : ApplicationModuleAsset<IUpdateModule, UpdateModuleDescription>
     {
-        [SerializeField] private List<AssetReference<UpdateSystemDescriptionAssetBase>> m_systems = new List<AssetReference<UpdateSystemDescriptionAssetBase>>();
-        [SerializeField] private List<AssetReference<UpdateGroupAssetBase>> m_groups = new List<AssetReference<UpdateGroupAssetBase>>();
+        [SerializeField] private List<AssetReference<UpdateSystemDescriptionAsset>> m_systems = new List<AssetReference<UpdateSystemDescriptionAsset>>();
+        [SerializeField] private List<AssetReference<UpdateGroupAsset>> m_groups = new List<AssetReference<UpdateGroupAsset>>();
 
-        public List<AssetReference<UpdateSystemDescriptionAssetBase>> Systems { get { return m_systems; } }
-        public List<AssetReference<UpdateGroupAssetBase>> Groups { get { return m_groups; } }
+        public List<AssetReference<UpdateSystemDescriptionAsset>> Systems { get { return m_systems; } }
+        public List<AssetReference<UpdateGroupAsset>> Groups { get { return m_groups; } }
 
         protected override IApplicationModuleDescription OnBuildDescription()
         {
@@ -23,7 +23,7 @@ namespace UGF.Module.Update.Runtime
 
             for (int i = 0; i < m_systems.Count; i++)
             {
-                AssetReference<UpdateSystemDescriptionAssetBase> reference = m_systems[i];
+                AssetReference<UpdateSystemDescriptionAsset> reference = m_systems[i];
                 IUpdateSystemDescription systemDescription = reference.Asset.Build();
 
                 description.Systems.Add(reference.Guid, systemDescription);
@@ -31,8 +31,8 @@ namespace UGF.Module.Update.Runtime
 
             for (int i = 0; i < m_groups.Count; i++)
             {
-                AssetReference<UpdateGroupAssetBase> reference = m_groups[i];
-                UpdateGroupAssetBase builder = reference.Asset;
+                AssetReference<UpdateGroupAsset> reference = m_groups[i];
+                UpdateGroupAsset builder = reference.Asset;
 
                 description.Groups.Add(reference.Guid, builder);
             }

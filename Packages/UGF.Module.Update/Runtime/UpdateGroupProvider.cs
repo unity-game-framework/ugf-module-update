@@ -24,14 +24,13 @@ namespace UGF.Module.Update.Runtime
         {
             if (!(entry is IDescribed<IUpdateGroupDescription> described)) throw new ArgumentException("Entry must be of 'IDescribed<IUpdateGroupDescription>' type.", nameof(entry));
 
-            UpdateProvider.Add(described.Description.SystemType, entry);
+            UpdateProvider.AddWithSubSystemType(entry, described.Description.SystemType);
 
             base.OnAdd(id, entry);
 
             Log.Debug("Add update group", new
             {
                 id,
-                entry.Name,
                 described.Description.SystemType
             });
         }
@@ -42,8 +41,7 @@ namespace UGF.Module.Update.Runtime
 
             Log.Debug("Remove update group", new
             {
-                id,
-                entry.Name
+                id
             });
 
             return base.OnRemove(id, entry);
