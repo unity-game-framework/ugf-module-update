@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UGF.Application.Runtime;
+using UGF.Builder.Runtime;
 using UGF.Logs.Runtime;
 using UGF.RuntimeTools.Runtime.Providers;
 using UGF.Update.Runtime;
@@ -50,6 +51,24 @@ namespace UGF.Module.Update.Runtime
                 IUpdateGroup group = pair.Value.Build(Application);
 
                 Groups.Add(pair.Key, group);
+            }
+
+            foreach (KeyValuePair<string, IUpdateGroupBuilder> pair in Description.SubGroups)
+            {
+                IUpdateGroup group = Groups.Get(pair.Key);
+                IUpdateGroup subGroup = pair.Value.Build(Application);
+
+                group.SubGroups.Add(subGroup);
+            }
+
+            object[] arguments = { Application };
+
+            foreach (KeyValuePair<string, IBuilder> pair in Description.Entries)
+            {
+                IUpdateGroup group = Groups.Get(pair.Key);
+                object entry = pair.Value.Build(arguments);
+
+                group.Collection.Add(entry);
             }
         }
 

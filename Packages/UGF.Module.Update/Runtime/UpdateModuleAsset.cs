@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UGF.Application.Runtime;
+using UGF.Builder.Runtime;
 using UGF.EditorTools.Runtime.IMGUI.AssetReferences;
 using UnityEngine;
 
@@ -10,9 +12,33 @@ namespace UGF.Module.Update.Runtime
     {
         [SerializeField] private List<AssetReference<UpdateSystemDescriptionAsset>> m_systems = new List<AssetReference<UpdateSystemDescriptionAsset>>();
         [SerializeField] private List<AssetReference<UpdateGroupAsset>> m_groups = new List<AssetReference<UpdateGroupAsset>>();
+        [SerializeField] private List<SubGroupEntry> m_subGroups = new List<SubGroupEntry>();
+        [SerializeField] private List<CollectionEntry> m_entries = new List<CollectionEntry>();
 
         public List<AssetReference<UpdateSystemDescriptionAsset>> Systems { get { return m_systems; } }
         public List<AssetReference<UpdateGroupAsset>> Groups { get { return m_groups; } }
+        public List<SubGroupEntry> SubGroups { get { return m_subGroups; } }
+        public List<CollectionEntry> Entries { get { return m_entries; } }
+
+        [Serializable]
+        public struct SubGroupEntry
+        {
+            [SerializeField] private string m_group;
+            [SerializeField] private UpdateGroupAsset m_subGroup;
+
+            public string Group { get { return m_group; } set { m_group = value; } }
+            public UpdateGroupAsset SubGroup { get { return m_subGroup; } set { m_subGroup = value; } }
+        }
+
+        [Serializable]
+        public struct CollectionEntry
+        {
+            [SerializeField] private string m_group;
+            [SerializeField] private BuilderAssetBase m_builder;
+
+            public string Group { get { return m_group; } set { m_group = value; } }
+            public BuilderAssetBase Builder { get { return m_builder; } set { m_builder = value; } }
+        }
 
         protected override IApplicationModuleDescription OnBuildDescription()
         {
@@ -35,6 +61,20 @@ namespace UGF.Module.Update.Runtime
                 UpdateGroupAsset builder = reference.Asset;
 
                 description.Groups.Add(reference.Guid, builder);
+            }
+
+            for (int i = 0; i < m_subGroups.Count; i++)
+            {
+                SubGroupEntry entry = m_subGroups[i];
+
+                description.SubGroups.Add(entry.Group, entry.SubGroup);
+            }
+
+            for (int i = 0; i < m_entries.Count; i++)
+            {
+                CollectionEntry entry = m_entries[i];
+
+                description.Entries.Add(entry.Group, entry.Builder);
             }
 
             return description;
