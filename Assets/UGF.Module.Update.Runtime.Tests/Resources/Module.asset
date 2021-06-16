@@ -18,3 +18,7 @@ MonoBehaviour:
   m_groups:
   - m_guid: 4614ceca8914e5b4d8326f86aded3229
     m_asset: {fileID: 11400000, guid: 4614ceca8914e5b4d8326f86aded3229, type: 2}
+  m_subGroups:
+  - m_group: 4614ceca8914e5b4d8326f86aded3229
+    m_builder: {fileID: 11400000, guid: 4614ceca8914e5b4d8326f86aded3229, type: 2}
+  m_entries: []
