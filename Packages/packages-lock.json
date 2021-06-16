@@ -77,23 +77,24 @@
       "source": "embedded",
       "dependencies": {
         "com.ugf.application": "8.0.0-preview.7",
-        "com.ugf.update": "5.2.1"
+        "com.ugf.update": "6.0.0-preview"
       }
     },
     "com.ugf.runtimetools": {
       "version": "2.0.0",
-      "depth": 1,
+      "depth": 2,
       "source": "registry",
       "dependencies": {},
       "url": "https://unitygameframework.jfrog.io/artifactory/api/npm/default"
     },
     "com.ugf.update": {
-      "version": "file:../../ugf-update/Packages/UGF.Update",
-      "depth": 0,
-      "source": "local",
+      "version": "6.0.0-preview",
+      "depth": 1,
+      "source": "registry",
       "dependencies": {
         "com.ugf.runtimetools": "2.0.0"
-      }
+      },
+      "url": "https://unitygameframework.jfrog.io/artifactory/api/npm/default"
     },
     "com.unity.ext.nunit": {
       "version": "1.0.6",
