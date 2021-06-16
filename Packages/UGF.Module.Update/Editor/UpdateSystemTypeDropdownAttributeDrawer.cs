@@ -41,15 +41,9 @@ namespace UGF.Module.Update.Editor
 
         protected override void OnGetItems(ICollection<DropdownItem<Type>> items)
         {
-            items.Add(NoneItem);
+            base.OnGetItems(items);
 
-            TypesDropdownEditorUtility.GetTypeItems(items, Attribute.TargetType, Attribute.DisplayFullPath, Attribute.DisplayAssemblyName);
-            TypesDropdownEditorUtility.GetTypeItems(items, OnValidate, Attribute.DisplayFullPath, Attribute.DisplayAssemblyName);
-        }
-
-        private bool OnValidate(Type type)
-        {
-            return type.Namespace == "UnityEngine.PlayerLoop";
+            TypesDropdownEditorUtility.GetTypeItems(items, type => type.Namespace == "UnityEngine.PlayerLoop", Attribute.DisplayFullPath, Attribute.DisplayAssemblyName);
         }
     }
 }
