@@ -1,14 +1,41 @@
-﻿using UGF.Update.Runtime;
-using UnityEngine;
+﻿using System;
+using UGF.Application.Runtime;
+using UGF.Builder.Runtime;
+using UGF.Description.Runtime;
+using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    [CreateAssetMenu(menuName = "Unity Game Framework/Update/Update Group", order = 2000)]
-    public class UpdateGroupAsset : UpdateGroupAsset<IUpdateHandler, UpdateGroupDescription>
+    public abstract class UpdateGroupAsset : BuilderAsset<IApplication, IUpdateGroup>, IUpdateGroupBuilder, IDescriptionBuilder
     {
-        protected override IUpdateCollection OnBuildCollection()
+        protected override IUpdateGroup OnBuild(IApplication arguments)
         {
-            return new UpdateSet<IUpdateHandler>();
+            IUpdateGroupDescription description = OnBuildDescription();
+
+            if (description == null) throw new ArgumentNullException(nameof(description), "Description can not be null.");
+
+            return OnBuild(description, arguments);
+        }
+
+        protected virtual IUpdateGroup OnBuild(IUpdateGroupDescription description, IApplication application)
+        {
+            IUpdateCollection collection = OnBuildCollection(description, application);
+
+            return OnBuild(collection, description, application);
+        }
+
+        protected abstract IUpdateGroupDescription OnBuildDescription();
+        protected abstract IUpdateCollection OnBuildCollection(IUpdateGroupDescription description, IApplication application);
+        protected abstract IUpdateGroup OnBuild(IUpdateCollection collection, IUpdateGroupDescription description, IApplication application);
+
+        T IBuilder<IDescription>.Build<T>()
+        {
+            return (T)OnBuildDescription();
+        }
+
+        IDescription IBuilder<IDescription>.Build()
+        {
+            return OnBuildDescription();
         }
     }
 }

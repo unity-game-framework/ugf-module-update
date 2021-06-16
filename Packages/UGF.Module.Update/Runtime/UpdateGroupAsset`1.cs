@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
 {
-    public abstract class UpdateGroupAsset<TItem, TDescription> : UpdateGroupAssetBase
+    public abstract class UpdateGroupAsset<TItem, TDescription> : UpdateGroupAsset
         where TItem : class
         where TDescription : class, IUpdateGroupDescription
     {
