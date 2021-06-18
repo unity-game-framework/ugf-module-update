@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0-preview.1](https://github.com/unity-game-framework/ugf-module-update/releases/tag/3.0.0-preview.1) - 2021-06-18  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-module-update/milestone/8?closed=1)  
+    
+
+### Added
+
+- Add module entries collection ([#32](https://github.com/unity-game-framework/ugf-module-update/pull/32))  
+    - Add `IUpdateModuleDescription.SubGroups` collection to describe groups which required to add at specified update group as subgroup.
+    - Add `IUpdateModuleDescription.Entries` collection to describe entries which required to add at specified update group.
+    - Add `IUpdateModule.Entries` to provide registered entries.
+
+### Changed
+
+- Update to latest update package ([#30](https://github.com/unity-game-framework/ugf-module-update/pull/30))  
+    - Change `UpdateGroupProvider` to work with updated `IUpdateProvider`.
+    - Change `UpdateGroupDescribed` to implement update `UpdateGroup`.
+    - Change `UpdateGroupAssetBase.OnBuild` method to receive `IApplication` as argument.
+    - Change `UpdateSystemDescriptionProvider` to receive `IUpdateLoop` in constructor directly.
+    - Change name of `UpdateGroupAssetBase` and `UpdateSystemDescriptionAssetBase` to `UpdateGroupAsset` and `UpdateSystemDescriptionAsset`.
+    - Change name of `UpdateGroupAsset` to `UpdateGroupSetAsset`.
+    - Change name of `UpdateSystemDescriptionAsset` to `UpdateSystemDescriptionDefaultAsset`.
+    - Remove `Name` property from `UpdateGroupAsset` asset class.
+- Add application argument for IUpdateGroupBuilder  ([#28](https://github.com/unity-game-framework/ugf-module-update/pull/28))  
+    - Change `IUpdateGroupBuilder` to have `IApplication` as argument in build method.
+
 ## [3.0.0-preview](https://github.com/unity-game-framework/ugf-module-update/releases/tag/3.0.0-preview) - 2021-03-02  
 
 ### Release Notes

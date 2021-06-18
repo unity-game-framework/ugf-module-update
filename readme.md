@@ -4,14 +4,14 @@ UGF.Module.Update
 
 ## Info
 
-- **Version**: `3.0.0-preview`
+- **Version**: `3.0.0-preview.1`
 - **Unity**: `2021.1`
 - **API Compatibility Level**: `.NET Standard 2.0`
 
 ### Dependencies
 
-- `com.ugf.application`: `8.0.0-preview.4`
-- `com.ugf.update`: `5.2.1`
+- `com.ugf.application`: `8.0.0-preview.7`
+- `com.ugf.update`: `6.0.0-preview`
 
 
 ### Description
