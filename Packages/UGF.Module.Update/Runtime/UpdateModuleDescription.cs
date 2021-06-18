@@ -13,5 +13,7 @@ namespace UGF.Module.Update.Runtime
 
         IReadOnlyDictionary<string, IUpdateSystemDescription> IUpdateModuleDescription.Systems { get { return Systems; } }
         IReadOnlyDictionary<string, IUpdateGroupBuilder> IUpdateModuleDescription.Groups { get { return Groups; } }
+        IReadOnlyDictionary<string, IUpdateGroupBuilder> IUpdateModuleDescription.SubGroups { get { return SubGroups; } }
+        IReadOnlyDictionary<string, IBuilder> IUpdateModuleDescription.Entries { get { return Entries; } }
     }
 }
