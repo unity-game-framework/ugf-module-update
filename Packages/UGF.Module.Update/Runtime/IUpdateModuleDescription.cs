@@ -8,7 +8,7 @@ namespace UGF.Module.Update.Runtime
     {
         IReadOnlyDictionary<string, IUpdateSystemDescription> Systems { get; }
         IReadOnlyDictionary<string, IUpdateGroupBuilder> Groups { get; }
-        IReadOnlyDictionary<string, IUpdateGroupBuilder> SubGroups { get; }
-        IReadOnlyDictionary<string, IBuilder> Entries { get; }
+        IReadOnlyDictionary<string, UpdateGroupItemDescription<IUpdateGroupBuilder>> SubGroups { get; }
+        IReadOnlyDictionary<string, UpdateGroupItemDescription<IBuilder>> Entries { get; }
     }
 }

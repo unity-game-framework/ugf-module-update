@@ -26,10 +26,10 @@ namespace UGF.Module.Update.Runtime
         {
             [AssetGuid(typeof(UpdateGroupAsset))]
             [SerializeField] private string m_group;
-            [SerializeField] private TBuilder m_builder;
+            [SerializeField] private AssetReference<TBuilder> m_builder;
 
             public string Group { get { return m_group; } set { m_group = value; } }
-            public TBuilder Builder { get { return m_builder; } set { m_builder = value; } }
+            public AssetReference<TBuilder> Builder { get { return m_builder; } set { m_builder = value; } }
         }
 
         protected override IApplicationModuleDescription OnBuildDescription()
@@ -60,9 +60,10 @@ namespace UGF.Module.Update.Runtime
                 BuilderEntry<UpdateGroupAsset> entry = m_subGroups[i];
 
                 if (string.IsNullOrEmpty(entry.Group)) throw new ArgumentException("Value cannot be null or empty.", nameof(entry.Group));
-                if (entry.Builder == null) throw new ArgumentNullException(nameof(entry.Builder));
 
-                description.SubGroups.Add(entry.Group, entry.Builder);
+                AssetReference<UpdateGroupAsset> reference = entry.Builder;
+
+                description.SubGroups.Add(reference.Guid, new UpdateGroupItemDescription<IUpdateGroupBuilder>(entry.Group, reference.Asset));
             }
 
             for (int i = 0; i < m_entries.Count; i++)
@@ -70,9 +71,10 @@ namespace UGF.Module.Update.Runtime
                 BuilderEntry<BuilderAssetBase> entry = m_entries[i];
 
                 if (string.IsNullOrEmpty(entry.Group)) throw new ArgumentException("Value cannot be null or empty.", nameof(entry.Group));
-                if (entry.Builder == null) throw new ArgumentNullException(nameof(entry.Builder));
 
-                description.Entries.Add(entry.Group, entry.Builder);
+                AssetReference<BuilderAssetBase> reference = entry.Builder;
+
+                description.Entries.Add(reference.Guid, new UpdateGroupItemDescription<IBuilder>(entry.Group, reference.Asset));
             }
 
             return description;

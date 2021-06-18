@@ -13,6 +13,7 @@ namespace UGF.Module.Update.Runtime
         public IUpdateProvider Provider { get; }
         public IProvider<string, IUpdateSystemDescription> Systems { get; }
         public IProvider<string, IUpdateGroup> Groups { get; }
+        public IProvider<string, object> Entries { get; }
 
         IUpdateModuleDescription IUpdateModule.Description { get { return Description; } }
 
@@ -20,15 +21,16 @@ namespace UGF.Module.Update.Runtime
         {
         }
 
-        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new UpdateSystemDescriptionProvider(provider.UpdateLoop), new UpdateGroupProvider(provider))
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new UpdateSystemDescriptionProvider(provider.UpdateLoop), new UpdateGroupProvider(provider), new Provider<string, object>())
         {
         }
 
-        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider, IProvider<string, IUpdateSystemDescription> systems, IProvider<string, IUpdateGroup> groups) : base(description, application)
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider, IProvider<string, IUpdateSystemDescription> systems, IProvider<string, IUpdateGroup> groups, IProvider<string, object> entries) : base(description, application)
         {
             Provider = provider ?? throw new ArgumentNullException(nameof(provider));
             Systems = systems ?? throw new ArgumentNullException(nameof(systems));
             Groups = groups ?? throw new ArgumentNullException(nameof(groups));
+            Entries = entries ?? throw new ArgumentNullException(nameof(entries));
         }
 
         protected override void OnInitialize()
@@ -55,22 +57,26 @@ namespace UGF.Module.Update.Runtime
                 Groups.Add(pair.Key, group);
             }
 
-            foreach (KeyValuePair<string, IUpdateGroupBuilder> pair in Description.SubGroups)
+            foreach (KeyValuePair<string, UpdateGroupItemDescription<IUpdateGroupBuilder>> pair in Description.SubGroups)
             {
-                IUpdateGroup group = Groups.Get(pair.Key);
-                IUpdateGroup subGroup = pair.Value.Build(Application);
+                IUpdateGroup group = Groups.Get(pair.Value.GroupId);
+                IUpdateGroup subGroup = pair.Value.Builder.Build(Application);
 
                 group.SubGroups.Add(subGroup);
+
+                Groups.Add(pair.Key, subGroup);
             }
 
             object[] arguments = { Application };
 
-            foreach (KeyValuePair<string, IBuilder> pair in Description.Entries)
+            foreach (KeyValuePair<string, UpdateGroupItemDescription<IBuilder>> pair in Description.Entries)
             {
                 IUpdateGroup group = Groups.Get(pair.Key);
-                object entry = pair.Value.Build(arguments);
+                object entry = pair.Value.Builder.Build(arguments);
 
                 group.Collection.Add(entry);
+
+                Entries.Add(pair.Key, entry);
             }
         }
 
@@ -81,11 +87,13 @@ namespace UGF.Module.Update.Runtime
             Log.Debug("Update module uninitialize", new
             {
                 systems = Systems.Entries.Count,
-                groups = Groups.Entries.Count
+                groups = Groups.Entries.Count,
+                entries = Entries.Entries.Count
             });
 
             Groups.Clear();
             Systems.Clear();
+            Entries.Clear();
         }
     }
 }
