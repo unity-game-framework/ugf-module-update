@@ -29,7 +29,7 @@ namespace UGF.Module.Update.Runtime.Tests
             var module = application.GetModule<IUpdateModule>();
 
             Assert.NotNull(module);
-            Assert.AreEqual(1, module.Provider.Entries.Count);
+            Assert.AreEqual(2, module.Provider.Entries.Count);
 
             application.Uninitialize();
 
