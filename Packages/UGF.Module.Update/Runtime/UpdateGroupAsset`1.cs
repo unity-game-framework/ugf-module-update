@@ -1,35 +1,33 @@
 ﻿using System;
 using UGF.Application.Runtime;
-using UGF.EditorTools.Runtime.IMGUI.Types;
+using UGF.Builder.Runtime;
+using UGF.Description.Runtime;
 using UGF.Update.Runtime;
-using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
 {
-    public abstract class UpdateGroupAsset<TItem, TDescription> : UpdateGroupAsset
-        where TItem : class
-        where TDescription : class, IUpdateGroupDescription
+    public abstract class UpdateGroupAsset<TDescription> : UpdateGroupAsset, IDescriptionBuilder where TDescription : class, IDescription
     {
-        [UpdateSystemTypeDropdown]
-        [SerializeField] private TypeReference<object> m_systemType;
-
-        public TypeReference<object> SystemType { get { return m_systemType; } set { m_systemType = value; } }
-
-        protected override IUpdateGroupDescription OnBuildDescription()
+        protected override IUpdateGroup OnBuild(IApplication arguments)
         {
-            Type type = m_systemType.Get();
+            TDescription description = OnBuildDescription();
 
-            return new UpdateGroupDescription(type);
+            if (description == null) throw new ArgumentNullException(nameof(description), "Description can not be null.");
+
+            return OnBuild(description, arguments);
         }
 
-        protected override IUpdateGroup OnBuild(IUpdateCollection collection, IUpdateGroupDescription description, IApplication application)
+        protected abstract TDescription OnBuildDescription();
+        protected abstract IUpdateGroup OnBuild(TDescription description, IApplication application);
+
+        T IBuilder<IDescription>.Build<T>()
         {
-            return OnBuild((IUpdateCollection<TItem>)collection, (TDescription)description, application);
+            return (T)(object)OnBuildDescription();
         }
 
-        protected virtual IUpdateGroup OnBuild(IUpdateCollection<TItem> collection, TDescription description, IApplication application)
+        IDescription IBuilder<IDescription>.Build()
         {
-            return new UpdateGroupDescribed<TItem, TDescription>(collection, description);
+            return OnBuildDescription();
         }
     }
 }

@@ -4,13 +4,11 @@ using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateGroupDescribed<TItem, TDescription> : UpdateGroup<TItem>, IDescribed<IUpdateGroupDescription>
+    public class UpdateGroupDescribed<TItem, TDescription> : UpdateGroup<TItem>, IDescribed
         where TItem : class
-        where TDescription : class, IUpdateGroupDescription
+        where TDescription : class, IDescription
     {
         public TDescription Description { get; }
-
-        IUpdateGroupDescription IDescribed<IUpdateGroupDescription>.Description { get { return Description; } }
 
         public UpdateGroupDescribed(IUpdateCollection<TItem> collection, TDescription description) : this(collection, new UpdateListHandler<IUpdateGroup>(item => item.Update()), description)
         {
