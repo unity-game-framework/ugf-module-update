@@ -19,22 +19,51 @@ namespace UGF.Module.Update.Editor
             float height = EditorGUIUtility.singleLineHeight;
             float space = EditorGUIUtility.standardVerticalSpacing;
 
-            var rectGroup = new Rect(position.x, position.y, position.width, height);
+            var rectFoldout = new Rect(position.x, position.y, position.width, height);
+            var rectGroup = new Rect(position.x, rectFoldout.yMax + space, position.width, height);
             var rectBuilder = new Rect(position.x, rectGroup.yMax + space, position.width, height);
 
-            using (new IndentIncrementScope(-1))
+            string contentFoldout = GetGroupName(propertyGroup);
+
+            serializedProperty.isExpanded = EditorGUI.Foldout(rectFoldout, serializedProperty.isExpanded, contentFoldout, true);
+
+            if (serializedProperty.isExpanded)
             {
-                EditorGUI.PropertyField(rectGroup, propertyGroup);
-                EditorGUI.PropertyField(rectBuilder, propertyBuilder);
+                using (new IndentIncrementScope(1))
+                {
+                    EditorGUI.PropertyField(rectGroup, propertyGroup);
+                    EditorGUI.PropertyField(rectBuilder, propertyBuilder);
+                }
             }
         }
 
         protected override float OnElementHeightContent(SerializedProperty serializedProperty, int index)
         {
             float height = EditorGUIUtility.singleLineHeight;
-            float space = EditorGUIUtility.standardVerticalSpacing;
 
-            return height * 2F + space;
+            if (serializedProperty.isExpanded)
+            {
+                float space = EditorGUIUtility.standardVerticalSpacing;
+
+                return height * 3F + space * 2F;
+            }
+
+            return height;
+        }
+
+        private static string GetGroupName(SerializedProperty serializedProperty)
+        {
+            string value = serializedProperty.stringValue;
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(value);
+                var asset = AssetDatabase.LoadAssetAtPath<Object>(path);
+
+                return asset != null ? asset.name : "Missing";
+            }
+
+            return "None";
         }
     }
 }
