@@ -92,10 +92,10 @@ namespace UGF.Module.Update.Runtime
                 entries = Entries.Entries.Count
             });
 
+            Provider.Clear();
             Groups.Clear();
             Systems.Clear();
             Entries.Clear();
-            Provider.Clear();
         }
     }
 }

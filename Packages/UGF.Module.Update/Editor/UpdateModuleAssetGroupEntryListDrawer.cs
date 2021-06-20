@@ -1,29 +1,31 @@
-﻿using UGF.EditorTools.Editor.IMGUI;
+﻿using System;
+using UGF.EditorTools.Editor.IMGUI;
 using UGF.EditorTools.Editor.IMGUI.Scopes;
 using UnityEditor;
 using UnityEngine;
 
 namespace UGF.Module.Update.Editor
 {
-    internal class UpdateModuleAssetBuilderEntryListDrawer : ReorderableListDrawer
+    internal class UpdateModuleAssetGroupEntryListDrawer : ReorderableListDrawer
     {
-        public UpdateModuleAssetBuilderEntryListDrawer(SerializedProperty serializedProperty) : base(serializedProperty)
+        public UpdateModuleAssetGroupEntryListDrawer(SerializedProperty serializedProperty) : base(serializedProperty)
         {
         }
 
         protected override void OnDrawElementContent(Rect position, SerializedProperty serializedProperty, int index, bool isActive, bool isFocused)
         {
+            SerializedProperty propertySubSystemType = serializedProperty.FindPropertyRelative("m_subSystemType");
+            SerializedProperty propertySubSystemTypeValue = propertySubSystemType.FindPropertyRelative("m_value");
             SerializedProperty propertyGroup = serializedProperty.FindPropertyRelative("m_group");
-            SerializedProperty propertyBuilder = serializedProperty.FindPropertyRelative("m_builder");
 
             float height = EditorGUIUtility.singleLineHeight;
             float space = EditorGUIUtility.standardVerticalSpacing;
 
             var rectFoldout = new Rect(position.x, position.y, position.width, height);
-            var rectGroup = new Rect(position.x, rectFoldout.yMax + space, position.width, height);
-            var rectBuilder = new Rect(position.x, rectGroup.yMax + space, position.width, height);
+            var rectSubSystemType = new Rect(position.x, rectFoldout.yMax + space, position.width, height);
+            var rectGroup = new Rect(position.x, rectSubSystemType.yMax + space, position.width, height);
 
-            string contentFoldout = GetGroupName(propertyGroup);
+            string contentFoldout = GetSystemName(propertySubSystemTypeValue);
 
             serializedProperty.isExpanded = EditorGUI.Foldout(rectFoldout, serializedProperty.isExpanded, contentFoldout, true);
 
@@ -31,22 +33,21 @@ namespace UGF.Module.Update.Editor
             {
                 using (new IndentIncrementScope(1))
                 {
+                    EditorGUI.PropertyField(rectSubSystemType, propertySubSystemType);
                     EditorGUI.PropertyField(rectGroup, propertyGroup);
-                    EditorGUI.PropertyField(rectBuilder, propertyBuilder);
                 }
             }
         }
 
-        private static string GetGroupName(SerializedProperty serializedProperty)
+        private static string GetSystemName(SerializedProperty serializedProperty)
         {
             string value = serializedProperty.stringValue;
 
             if (!string.IsNullOrEmpty(value))
             {
-                string path = AssetDatabase.GUIDToAssetPath(value);
-                var asset = AssetDatabase.LoadAssetAtPath<Object>(path);
+                var type = Type.GetType(value);
 
-                return asset != null ? asset.name : "Missing";
+                return type != null ? type.Name : "Missing";
             }
 
             return "None";
