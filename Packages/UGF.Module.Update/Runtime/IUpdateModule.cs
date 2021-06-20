@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UGF.Application.Runtime;
 using UGF.RuntimeTools.Runtime.Providers;
 using UGF.Update.Runtime;
@@ -8,7 +9,8 @@ namespace UGF.Module.Update.Runtime
     {
         new IUpdateModuleDescription Description { get; }
         IUpdateProvider Provider { get; }
-        IProvider<string, IUpdateSystemDescription> Systems { get; }
+        IReadOnlyList<UpdateSystemDescription> Systems { get; }
         IProvider<string, IUpdateGroup> Groups { get; }
+        IProvider<string, object> Entries { get; }
     }
 }

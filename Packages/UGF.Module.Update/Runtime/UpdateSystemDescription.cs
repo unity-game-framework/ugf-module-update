@@ -3,7 +3,7 @@ using UGF.Update.Runtime;
 
 namespace UGF.Module.Update.Runtime
 {
-    public class UpdateSystemDescription : IUpdateSystemDescription
+    public readonly struct UpdateSystemDescription
     {
         public Type TargetSystemType { get; }
         public Type SystemType { get; }

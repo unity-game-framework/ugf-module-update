@@ -5,6 +5,7 @@ using UGF.Builder.Runtime;
 using UGF.EditorTools.Runtime.IMGUI.AssetReferences;
 using UGF.EditorTools.Runtime.IMGUI.Attributes;
 using UGF.EditorTools.Runtime.IMGUI.Types;
+using UGF.Update.Runtime;
 using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
@@ -12,15 +13,29 @@ namespace UGF.Module.Update.Runtime
     [CreateAssetMenu(menuName = "Unity Game Framework/Update/Update Module", order = 2000)]
     public class UpdateModuleAsset : ApplicationModuleAsset<IUpdateModule, UpdateModuleDescription>
     {
-        [SerializeField] private List<AssetReference<UpdateSystemDescriptionAsset>> m_systems = new List<AssetReference<UpdateSystemDescriptionAsset>>();
+        [SerializeField] private List<SystemEntry> m_systems = new List<SystemEntry>();
         [SerializeField] private List<GroupEntry> m_groups = new List<GroupEntry>();
         [SerializeField] private List<BuilderEntry<UpdateGroupAsset>> m_subGroups = new List<BuilderEntry<UpdateGroupAsset>>();
         [SerializeField] private List<BuilderEntry<BuilderAssetBase>> m_entries = new List<BuilderEntry<BuilderAssetBase>>();
 
-        public List<AssetReference<UpdateSystemDescriptionAsset>> Systems { get { return m_systems; } }
+        public List<SystemEntry> Systems { get { return m_systems; } }
         public List<GroupEntry> Groups { get { return m_groups; } }
         public List<BuilderEntry<UpdateGroupAsset>> SubGroups { get { return m_subGroups; } }
         public List<BuilderEntry<BuilderAssetBase>> Entries { get { return m_entries; } }
+
+        [Serializable]
+        public struct SystemEntry
+        {
+            [UpdateSystemTypeDropdown]
+            [SerializeField] private TypeReference<object> m_targetSystemType;
+            [UpdateSystemTypeDropdown]
+            [SerializeField] private TypeReference<object> m_systemType;
+            [SerializeField] private UpdateSubSystemInsertion m_insertion;
+
+            public TypeReference<object> TargetSystemType { get { return m_targetSystemType; } set { m_targetSystemType = value; } }
+            public TypeReference<object> SystemType { get { return m_systemType; } set { m_systemType = value; } }
+            public UpdateSubSystemInsertion Insertion { get { return m_insertion; } set { m_insertion = value; } }
+        }
 
         [Serializable]
         public struct GroupEntry
@@ -53,10 +68,12 @@ namespace UGF.Module.Update.Runtime
 
             for (int i = 0; i < m_systems.Count; i++)
             {
-                AssetReference<UpdateSystemDescriptionAsset> reference = m_systems[i];
-                IUpdateSystemDescription systemDescription = reference.Asset.Build();
+                SystemEntry entry = m_systems[i];
+                Type targetSystemType = entry.TargetSystemType.Get();
+                Type systemType = entry.SystemType.Get();
+                UpdateSubSystemInsertion insertion = entry.Insertion;
 
-                description.Systems.Add(reference.Guid, systemDescription);
+                description.Systems.Add(new UpdateSystemDescription(targetSystemType, systemType, insertion));
             }
 
             for (int i = 0; i < m_groups.Count; i++)
