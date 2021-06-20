@@ -10,7 +10,7 @@ namespace UGF.Module.Update.Editor
     {
         private SerializedProperty m_propertyScript;
         private AssetReferenceListDrawer m_listSystems;
-        private AssetReferenceListDrawer m_listGroups;
+        private UpdateModuleAssetGroupEntryListDrawer m_listGroups;
         private UpdateModuleAssetBuilderEntryListDrawer m_listSubGroups;
         private UpdateModuleAssetBuilderEntryListDrawer m_listEntries;
 
@@ -18,7 +18,7 @@ namespace UGF.Module.Update.Editor
         {
             m_propertyScript = serializedObject.FindProperty("m_Script");
             m_listSystems = new AssetReferenceListDrawer(serializedObject.FindProperty("m_systems"));
-            m_listGroups = new AssetReferenceListDrawer(serializedObject.FindProperty("m_groups"));
+            m_listGroups = new UpdateModuleAssetGroupEntryListDrawer(serializedObject.FindProperty("m_groups"));
             m_listSubGroups = new UpdateModuleAssetBuilderEntryListDrawer(serializedObject.FindProperty("m_subGroups"));
             m_listEntries = new UpdateModuleAssetBuilderEntryListDrawer(serializedObject.FindProperty("m_entries"));
 

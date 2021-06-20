@@ -21,7 +21,7 @@ namespace UGF.Module.Update.Runtime
         {
         }
 
-        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new UpdateSystemDescriptionProvider(provider.UpdateLoop), new UpdateGroupProvider(provider), new Provider<string, object>())
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new UpdateSystemDescriptionProvider(provider.UpdateLoop), new Provider<string, IUpdateGroup>(), new Provider<string, object>())
         {
         }
 
@@ -50,10 +50,11 @@ namespace UGF.Module.Update.Runtime
                 Systems.Add(pair.Key, pair.Value);
             }
 
-            foreach (KeyValuePair<string, IUpdateGroupBuilder> pair in Description.Groups)
+            foreach (KeyValuePair<string, UpdateGroupSystemDescription> pair in Description.Groups)
             {
-                IUpdateGroup group = pair.Value.Build(Application);
+                IUpdateGroup group = pair.Value.Builder.Build(Application);
 
+                Provider.AddWithSubSystemType(group, pair.Value.SubSystemType);
                 Groups.Add(pair.Key, group);
             }
 
@@ -91,6 +92,7 @@ namespace UGF.Module.Update.Runtime
                 entries = Entries.Entries.Count
             });
 
+            Provider.Clear();
             Groups.Clear();
             Systems.Clear();
             Entries.Clear();

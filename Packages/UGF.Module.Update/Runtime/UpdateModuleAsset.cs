@@ -4,6 +4,7 @@ using UGF.Application.Runtime;
 using UGF.Builder.Runtime;
 using UGF.EditorTools.Runtime.IMGUI.AssetReferences;
 using UGF.EditorTools.Runtime.IMGUI.Attributes;
+using UGF.EditorTools.Runtime.IMGUI.Types;
 using UnityEngine;
 
 namespace UGF.Module.Update.Runtime
@@ -12,14 +13,25 @@ namespace UGF.Module.Update.Runtime
     public class UpdateModuleAsset : ApplicationModuleAsset<IUpdateModule, UpdateModuleDescription>
     {
         [SerializeField] private List<AssetReference<UpdateSystemDescriptionAsset>> m_systems = new List<AssetReference<UpdateSystemDescriptionAsset>>();
-        [SerializeField] private List<AssetReference<UpdateGroupAsset>> m_groups = new List<AssetReference<UpdateGroupAsset>>();
+        [SerializeField] private List<GroupEntry> m_groups = new List<GroupEntry>();
         [SerializeField] private List<BuilderEntry<UpdateGroupAsset>> m_subGroups = new List<BuilderEntry<UpdateGroupAsset>>();
         [SerializeField] private List<BuilderEntry<BuilderAssetBase>> m_entries = new List<BuilderEntry<BuilderAssetBase>>();
 
         public List<AssetReference<UpdateSystemDescriptionAsset>> Systems { get { return m_systems; } }
-        public List<AssetReference<UpdateGroupAsset>> Groups { get { return m_groups; } }
+        public List<GroupEntry> Groups { get { return m_groups; } }
         public List<BuilderEntry<UpdateGroupAsset>> SubGroups { get { return m_subGroups; } }
         public List<BuilderEntry<BuilderAssetBase>> Entries { get { return m_entries; } }
+
+        [Serializable]
+        public struct GroupEntry
+        {
+            [UpdateSystemTypeDropdown]
+            [SerializeField] private TypeReference<object> m_subSystemType;
+            [SerializeField] private AssetReference<UpdateGroupAsset> m_group;
+
+            public TypeReference<object> SubSystemType { get { return m_subSystemType; } set { m_subSystemType = value; } }
+            public AssetReference<UpdateGroupAsset> Group { get { return m_group; } set { m_group = value; } }
+        }
 
         [Serializable]
         public struct BuilderEntry<TBuilder> where TBuilder : BuilderAssetBase
@@ -49,10 +61,11 @@ namespace UGF.Module.Update.Runtime
 
             for (int i = 0; i < m_groups.Count; i++)
             {
-                AssetReference<UpdateGroupAsset> reference = m_groups[i];
-                UpdateGroupAsset builder = reference.Asset;
+                GroupEntry entry = m_groups[i];
+                Type subSystemType = entry.SubSystemType.Get();
+                AssetReference<UpdateGroupAsset> reference = entry.Group;
 
-                description.Groups.Add(reference.Guid, builder);
+                description.Groups.Add(reference.Guid, new UpdateGroupSystemDescription(subSystemType, reference.Asset));
             }
 
             for (int i = 0; i < m_subGroups.Count; i++)
