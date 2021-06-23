@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0-preview.2](https://github.com/unity-game-framework/ugf-module-update/releases/tag/3.0.0-preview.2) - 2021-06-23  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-module-update/milestone/9?closed=1)  
+    
+
+### Changed
+
+- Rework IUpdateSystemDescription with struct ([#36](https://github.com/unity-game-framework/ugf-module-update/pull/36))  
+    - Update dependencies: `com.ugf.update` to `6.0.0-preview.1` version.
+    - Change `IUpdateModuleDescription.Systems` from dictionary to list collection.
+    - Change `UpdateModule` to register _PlayerLoop_ systems from description systems.
+    - Remove `IUpdateSystemDescription` interface and all related classes, replaced by `UpdateSystemDescription` structure.
+    - Remove `IUpdateModule.Systems` property, all required data can be accessed from description.
+
+### Removed
+
+- Remove IUpdateGroupDescription.SystemType ([#35](https://github.com/unity-game-framework/ugf-module-update/pull/35))  
+    - Add `UpdateGroupSystemDescription` to describe update group required to add to the specified update subsystem.
+    - Add `UpdateGroupListAsset` to build `UpdateGroup` with collection of items as list.
+    - Change `UpdateModule` to contains regular provider for groups and register groups from description to _UpdateProvider_.
+    - Change `UpdateModule` to clear _UpdateProvider_ on uninitialize.
+    - Change `IUpdateModuleDescription` to contains `Groups` as `UpdateGroupSystemDescription` items.
+    - Change `UpdateGroupAsset` to be `UpdateGroup` builder without description.
+    - Change `UpdateGroupDescribed` to contains description of any type.
+    - Remove `IUpdateGroupDescription` interface and all related classes.
+    - Remove `UpdateGroupAsset<TItem, TDescription>` class and replaced by `UpdateGroupAsset<TDescription>` with additional method to define and build description of any type.
+    - Remove `UpdateGroupProvider` class, `UpdateModule` register groups instead.
+
 ## [3.0.0-preview.1](https://github.com/unity-game-framework/ugf-module-update/releases/tag/3.0.0-preview.1) - 2021-06-18  
 
 ### Release Notes
