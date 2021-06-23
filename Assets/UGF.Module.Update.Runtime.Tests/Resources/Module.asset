@@ -13,8 +13,13 @@ MonoBehaviour:
   m_Name: Module
   m_EditorClassIdentifier: 
   m_systems:
-  - m_guid: a2139a918aa7e7e4c85b28c2189ae797
-    m_asset: {fileID: 11400000, guid: a2139a918aa7e7e4c85b28c2189ae797, type: 2}
+  - m_targetSystemType:
+      m_value: UnityEngine.PlayerLoop.Update+ScriptRunBehaviourUpdate, UnityEngine.CoreModule,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_systemType:
+      m_value: UGF.Module.Update.Runtime.Tests.TestUpdateSystemType, UGF.Module.Update.Runtime.Tests,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_insertion: 1
   m_groups:
   - m_subSystemType:
       m_value: UGF.Module.Update.Runtime.Tests.TestUpdateSystemType, UGF.Module.Update.Runtime.Tests,
