@@ -70,7 +70,7 @@ namespace UGF.Module.Update.Runtime
 
             foreach (KeyValuePair<string, UpdateGroupItemDescription<IBuilder>> pair in Description.Entries)
             {
-                IUpdateGroup group = Groups.Get(pair.Key);
+                IUpdateGroup group = Groups.Get(pair.Value.GroupId);
                 object entry = pair.Value.Builder.Build(arguments);
 
                 group.Collection.Add(entry);
