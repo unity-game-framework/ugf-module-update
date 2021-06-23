@@ -11,7 +11,6 @@ namespace UGF.Module.Update.Runtime
     public class UpdateModule : ApplicationModule<UpdateModuleDescription>, IUpdateModule
     {
         public IUpdateProvider Provider { get; }
-        public IProvider<string, IUpdateSystemDescription> Systems { get; }
         public IProvider<string, IUpdateGroup> Groups { get; }
         public IProvider<string, object> Entries { get; }
 
@@ -21,14 +20,13 @@ namespace UGF.Module.Update.Runtime
         {
         }
 
-        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new UpdateSystemDescriptionProvider(provider.UpdateLoop), new Provider<string, IUpdateGroup>(), new Provider<string, object>())
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new Provider<string, IUpdateGroup>(), new Provider<string, object>())
         {
         }
 
-        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider, IProvider<string, IUpdateSystemDescription> systems, IProvider<string, IUpdateGroup> groups, IProvider<string, object> entries) : base(description, application)
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider, IProvider<string, IUpdateGroup> groups, IProvider<string, object> entries) : base(description, application)
         {
             Provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            Systems = systems ?? throw new ArgumentNullException(nameof(systems));
             Groups = groups ?? throw new ArgumentNullException(nameof(groups));
             Entries = entries ?? throw new ArgumentNullException(nameof(entries));
         }
@@ -45,9 +43,9 @@ namespace UGF.Module.Update.Runtime
                 entries = Description.Entries.Count
             });
 
-            foreach (KeyValuePair<string, IUpdateSystemDescription> pair in Description.Systems)
+            foreach (UpdateSystemDescription description in Description.Systems)
             {
-                Systems.Add(pair.Key, pair.Value);
+                Provider.UpdateLoop.Add(description.TargetSystemType, description.SystemType, description.Insertion);
             }
 
             foreach (KeyValuePair<string, UpdateGroupSystemDescription> pair in Description.Groups)
@@ -72,7 +70,7 @@ namespace UGF.Module.Update.Runtime
 
             foreach (KeyValuePair<string, UpdateGroupItemDescription<IBuilder>> pair in Description.Entries)
             {
-                IUpdateGroup group = Groups.Get(pair.Key);
+                IUpdateGroup group = Groups.Get(pair.Value.GroupId);
                 object entry = pair.Value.Builder.Build(arguments);
 
                 group.Collection.Add(entry);
@@ -87,15 +85,19 @@ namespace UGF.Module.Update.Runtime
 
             Log.Debug("Update module uninitialize", new
             {
-                systems = Systems.Entries.Count,
+                systems = Description.Systems.Count,
                 groups = Groups.Entries.Count,
                 entries = Entries.Entries.Count
             });
 
-            Provider.Clear();
-            Groups.Clear();
-            Systems.Clear();
             Entries.Clear();
+            Groups.Clear();
+            Provider.Clear();
+
+            foreach (UpdateSystemDescription description in Description.Systems)
+            {
+                Provider.UpdateLoop.Remove(description.SystemType);
+            }
         }
     }
 }

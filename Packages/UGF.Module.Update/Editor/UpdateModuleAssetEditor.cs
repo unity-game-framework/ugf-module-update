@@ -1,4 +1,3 @@
-using UGF.EditorTools.Editor.IMGUI.AssetReferences;
 using UGF.EditorTools.Editor.IMGUI.Scopes;
 using UGF.Module.Update.Runtime;
 using UnityEditor;
@@ -9,7 +8,7 @@ namespace UGF.Module.Update.Editor
     internal class UpdateModuleAssetEditor : UnityEditor.Editor
     {
         private SerializedProperty m_propertyScript;
-        private AssetReferenceListDrawer m_listSystems;
+        private UpdateModuleAssetEditorSystemEntryListDrawer m_listSystems;
         private UpdateModuleAssetGroupEntryListDrawer m_listGroups;
         private UpdateModuleAssetBuilderEntryListDrawer m_listSubGroups;
         private UpdateModuleAssetBuilderEntryListDrawer m_listEntries;
@@ -17,7 +16,7 @@ namespace UGF.Module.Update.Editor
         private void OnEnable()
         {
             m_propertyScript = serializedObject.FindProperty("m_Script");
-            m_listSystems = new AssetReferenceListDrawer(serializedObject.FindProperty("m_systems"));
+            m_listSystems = new UpdateModuleAssetEditorSystemEntryListDrawer(serializedObject.FindProperty("m_systems"));
             m_listGroups = new UpdateModuleAssetGroupEntryListDrawer(serializedObject.FindProperty("m_groups"));
             m_listSubGroups = new UpdateModuleAssetBuilderEntryListDrawer(serializedObject.FindProperty("m_subGroups"));
             m_listEntries = new UpdateModuleAssetBuilderEntryListDrawer(serializedObject.FindProperty("m_entries"));
