@@ -90,14 +90,14 @@ namespace UGF.Module.Update.Runtime
                 entries = Entries.Entries.Count
             });
 
+            Entries.Clear();
+            Groups.Clear();
+            Provider.Clear();
+
             foreach (UpdateSystemDescription description in Description.Systems)
             {
                 Provider.UpdateLoop.Remove(description.SystemType);
             }
-
-            Provider.Clear();
-            Groups.Clear();
-            Entries.Clear();
         }
     }
 }
