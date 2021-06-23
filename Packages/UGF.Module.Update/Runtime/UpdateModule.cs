@@ -11,13 +11,10 @@ namespace UGF.Module.Update.Runtime
     public class UpdateModule : ApplicationModule<UpdateModuleDescription>, IUpdateModule
     {
         public IUpdateProvider Provider { get; }
-        public IReadOnlyList<UpdateSystemDescription> Systems { get { return m_systems; } }
         public IProvider<string, IUpdateGroup> Groups { get; }
         public IProvider<string, object> Entries { get; }
 
         IUpdateModuleDescription IUpdateModule.Description { get { return Description; } }
-
-        private readonly List<UpdateSystemDescription> m_systems = new List<UpdateSystemDescription>();
 
         public UpdateModule(UpdateModuleDescription description, IApplication application) : this(description, application, new UpdateProvider())
         {
@@ -49,8 +46,6 @@ namespace UGF.Module.Update.Runtime
             foreach (UpdateSystemDescription description in Description.Systems)
             {
                 Provider.UpdateLoop.Add(description.TargetSystemType, description.SystemType, description.Insertion);
-
-                m_systems.Add(description);
             }
 
             foreach (KeyValuePair<string, UpdateGroupSystemDescription> pair in Description.Groups)
@@ -90,17 +85,15 @@ namespace UGF.Module.Update.Runtime
 
             Log.Debug("Update module uninitialize", new
             {
-                systems = Systems.Count,
+                systems = Description.Systems.Count,
                 groups = Groups.Entries.Count,
                 entries = Entries.Entries.Count
             });
 
-            foreach (UpdateSystemDescription description in m_systems)
+            foreach (UpdateSystemDescription description in Description.Systems)
             {
                 Provider.UpdateLoop.Remove(description.SystemType);
             }
-
-            m_systems.Clear();
 
             Provider.Clear();
             Groups.Clear();
