@@ -13,8 +13,37 @@ MonoBehaviour:
   m_Name: New Update Module Asset
   m_EditorClassIdentifier: 
   m_systems:
-  - m_guid: a8c471a3362e4634f8eca5f6cbb3a8e1
-    m_asset: {fileID: 11400000, guid: a8c471a3362e4634f8eca5f6cbb3a8e1, type: 2}
+  - m_targetSystemType:
+      m_value: UGF.Module.Update.Runtime.Tests.TestUpdateSystemType, UGF.Module.Update.Runtime.Tests,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_systemType:
+      m_value: UnityEngine.PlayerLoop.EarlyUpdate, UnityEngine.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+    m_insertion: 1
   m_groups:
-  - m_guid: 6e4d9bb87c761994d8c33539f542c03a
-    m_asset: {fileID: 11400000, guid: 6e4d9bb87c761994d8c33539f542c03a, type: 2}
+  - m_subSystemType:
+      m_value: UnityEngine.PlayerLoop.EarlyUpdate, UnityEngine.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+    m_group:
+      m_guid:
+        m_first: 16552005250661535434
+        m_second: 2968696433931137752
+      m_asset: {fileID: 11400000, guid: 4614ceca8914e5b4d8326f86aded3229, type: 2}
+  m_subGroups:
+  - m_group:
+      m_first: 16552005250661535434
+      m_second: 2968696433931137752
+    m_builder:
+      m_guid:
+        m_first: 16552005250661535434
+        m_second: 2968696433931137752
+      m_asset: {fileID: 11400000, guid: 4614ceca8914e5b4d8326f86aded3229, type: 2}
+  m_entries:
+  - m_group:
+      m_first: 16552005250661535434
+      m_second: 2968696433931137752
+    m_builder:
+      m_guid:
+        m_first: 10341505688107719393
+        m_second: 4218708309430516171
+      m_asset: {fileID: 11400000, guid: b6579ae168a18f84cb399812dbdc8b3a, type: 2}

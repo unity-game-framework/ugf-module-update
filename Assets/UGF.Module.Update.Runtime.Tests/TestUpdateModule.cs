@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using NUnit.Framework;
 using UGF.Application.Runtime;
+using UGF.EditorTools.Runtime.Ids;
 using UGF.Update.Runtime;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -44,7 +45,7 @@ namespace UGF.Module.Update.Runtime.Tests
             application.Initialize();
 
             var module = application.GetModule<IUpdateModule>();
-            var group = module.Groups.Get<IUpdateGroup>("4614ceca8914e5b4d8326f86aded3229");
+            var group = module.Groups.Get<IUpdateGroup>(new GlobalId("4614ceca8914e5b4d8326f86aded3229"));
 
             Assert.NotNull(group);
 
