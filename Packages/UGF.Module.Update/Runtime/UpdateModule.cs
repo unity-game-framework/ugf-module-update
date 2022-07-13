@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using UGF.Application.Runtime;
 using UGF.Builder.Runtime;
+using UGF.EditorTools.Runtime.Ids;
 using UGF.Logs.Runtime;
 using UGF.RuntimeTools.Runtime.Providers;
 using UGF.Update.Runtime;
@@ -11,8 +11,8 @@ namespace UGF.Module.Update.Runtime
     public class UpdateModule : ApplicationModule<UpdateModuleDescription>, IUpdateModule
     {
         public IUpdateProvider Provider { get; }
-        public IProvider<string, IUpdateGroup> Groups { get; }
-        public IProvider<string, object> Entries { get; }
+        public IProvider<GlobalId, IUpdateGroup> Groups { get; }
+        public IProvider<GlobalId, object> Entries { get; }
 
         IUpdateModuleDescription IUpdateModule.Description { get { return Description; } }
 
@@ -20,11 +20,11 @@ namespace UGF.Module.Update.Runtime
         {
         }
 
-        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new Provider<string, IUpdateGroup>(), new Provider<string, object>())
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider) : this(description, application, provider, new Provider<GlobalId, IUpdateGroup>(), new Provider<GlobalId, object>())
         {
         }
 
-        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider, IProvider<string, IUpdateGroup> groups, IProvider<string, object> entries) : base(description, application)
+        public UpdateModule(UpdateModuleDescription description, IApplication application, IUpdateProvider provider, IProvider<GlobalId, IUpdateGroup> groups, IProvider<GlobalId, object> entries) : base(description, application)
         {
             Provider = provider ?? throw new ArgumentNullException(nameof(provider));
             Groups = groups ?? throw new ArgumentNullException(nameof(groups));
@@ -48,34 +48,34 @@ namespace UGF.Module.Update.Runtime
                 Provider.UpdateLoop.Add(description.TargetSystemType, description.SystemType, description.Insertion);
             }
 
-            foreach (KeyValuePair<string, UpdateGroupSystemDescription> pair in Description.Groups)
+            foreach ((GlobalId key, UpdateGroupSystemDescription value) in Description.Groups)
             {
-                IUpdateGroup group = pair.Value.Builder.Build(Application);
+                IUpdateGroup group = value.Builder.Build(Application);
 
-                Provider.AddWithSubSystemType(group, pair.Value.SubSystemType);
-                Groups.Add(pair.Key, group);
+                Provider.AddWithSubSystemType(group, value.SubSystemType);
+                Groups.Add(key, group);
             }
 
-            foreach (KeyValuePair<string, UpdateGroupItemDescription<IUpdateGroupBuilder>> pair in Description.SubGroups)
+            foreach ((GlobalId key, UpdateGroupItemDescription<IUpdateGroupBuilder> value) in Description.SubGroups)
             {
-                IUpdateGroup group = Groups.Get(pair.Value.GroupId);
-                IUpdateGroup subGroup = pair.Value.Builder.Build(Application);
+                IUpdateGroup group = Groups.Get(value.GroupId);
+                IUpdateGroup subGroup = value.Builder.Build(Application);
 
                 group.SubGroups.Add(subGroup);
 
-                Groups.Add(pair.Key, subGroup);
+                Groups.Add(key, subGroup);
             }
 
             object[] arguments = { Application };
 
-            foreach (KeyValuePair<string, UpdateGroupItemDescription<IBuilder>> pair in Description.Entries)
+            foreach ((GlobalId key, UpdateGroupItemDescription<IBuilder> value) in Description.Entries)
             {
-                IUpdateGroup group = Groups.Get(pair.Value.GroupId);
-                object entry = pair.Value.Builder.Build(arguments);
+                IUpdateGroup group = Groups.Get(value.GroupId);
+                object entry = value.Builder.Build(arguments);
 
                 group.Collection.Add(entry);
 
-                Entries.Add(pair.Key, entry);
+                Entries.Add(key, entry);
             }
         }
 

@@ -1,4 +1,5 @@
 using UGF.Application.Runtime;
+using UGF.EditorTools.Runtime.Ids;
 using UGF.RuntimeTools.Runtime.Providers;
 using UGF.Update.Runtime;
 
@@ -8,7 +9,7 @@ namespace UGF.Module.Update.Runtime
     {
         new IUpdateModuleDescription Description { get; }
         IUpdateProvider Provider { get; }
-        IProvider<string, IUpdateGroup> Groups { get; }
-        IProvider<string, object> Entries { get; }
+        IProvider<GlobalId, IUpdateGroup> Groups { get; }
+        IProvider<GlobalId, object> Entries { get; }
     }
 }

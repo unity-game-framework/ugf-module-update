@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UGF.Application.Runtime;
 using UGF.Builder.Runtime;
-using UGF.EditorTools.Runtime.IMGUI.AssetReferences;
-using UGF.EditorTools.Runtime.IMGUI.Attributes;
+using UGF.EditorTools.Runtime.Assets;
+using UGF.EditorTools.Runtime.Ids;
 using UGF.EditorTools.Runtime.IMGUI.Types;
 using UGF.Update.Runtime;
 using UnityEngine;
@@ -27,13 +27,13 @@ namespace UGF.Module.Update.Runtime
         public struct SystemEntry
         {
             [UpdateSystemTypeDropdown]
-            [SerializeField] private TypeReference<object> m_targetSystemType;
+            [SerializeField] private TypeReference m_targetSystemType;
             [UpdateSystemTypeDropdown]
-            [SerializeField] private TypeReference<object> m_systemType;
+            [SerializeField] private TypeReference m_systemType;
             [SerializeField] private UpdateSubSystemInsertion m_insertion;
 
-            public TypeReference<object> TargetSystemType { get { return m_targetSystemType; } set { m_targetSystemType = value; } }
-            public TypeReference<object> SystemType { get { return m_systemType; } set { m_systemType = value; } }
+            public TypeReference TargetSystemType { get { return m_targetSystemType; } set { m_targetSystemType = value; } }
+            public TypeReference SystemType { get { return m_systemType; } set { m_systemType = value; } }
             public UpdateSubSystemInsertion Insertion { get { return m_insertion; } set { m_insertion = value; } }
         }
 
@@ -41,22 +41,22 @@ namespace UGF.Module.Update.Runtime
         public struct GroupEntry
         {
             [UpdateSystemTypeDropdown]
-            [SerializeField] private TypeReference<object> m_subSystemType;
-            [SerializeField] private AssetReference<UpdateGroupAsset> m_group;
+            [SerializeField] private TypeReference m_subSystemType;
+            [SerializeField] private AssetIdReference<UpdateGroupAsset> m_group;
 
-            public TypeReference<object> SubSystemType { get { return m_subSystemType; } set { m_subSystemType = value; } }
-            public AssetReference<UpdateGroupAsset> Group { get { return m_group; } set { m_group = value; } }
+            public TypeReference SubSystemType { get { return m_subSystemType; } set { m_subSystemType = value; } }
+            public AssetIdReference<UpdateGroupAsset> Group { get { return m_group; } set { m_group = value; } }
         }
 
         [Serializable]
         public struct BuilderEntry<TBuilder> where TBuilder : BuilderAssetBase
         {
-            [AssetGuid(typeof(UpdateGroupAsset))]
-            [SerializeField] private string m_group;
-            [SerializeField] private AssetReference<TBuilder> m_builder;
+            [AssetId(typeof(UpdateGroupAsset))]
+            [SerializeField] private GlobalId m_group;
+            [SerializeField] private AssetIdReference<TBuilder> m_builder;
 
-            public string Group { get { return m_group; } set { m_group = value; } }
-            public AssetReference<TBuilder> Builder { get { return m_builder; } set { m_builder = value; } }
+            public GlobalId Group { get { return m_group; } set { m_group = value; } }
+            public AssetIdReference<TBuilder> Builder { get { return m_builder; } set { m_builder = value; } }
         }
 
         protected override IApplicationModuleDescription OnBuildDescription()
@@ -80,7 +80,7 @@ namespace UGF.Module.Update.Runtime
             {
                 GroupEntry entry = m_groups[i];
                 Type subSystemType = entry.SubSystemType.Get();
-                AssetReference<UpdateGroupAsset> reference = entry.Group;
+                AssetIdReference<UpdateGroupAsset> reference = entry.Group;
 
                 description.Groups.Add(reference.Guid, new UpdateGroupSystemDescription(subSystemType, reference.Asset));
             }
@@ -89,9 +89,9 @@ namespace UGF.Module.Update.Runtime
             {
                 BuilderEntry<UpdateGroupAsset> entry = m_subGroups[i];
 
-                if (string.IsNullOrEmpty(entry.Group)) throw new ArgumentException("Value cannot be null or empty.", nameof(entry.Group));
+                if (!entry.Group.IsValid()) throw new ArgumentException("Value should be valid.", nameof(entry.Group));
 
-                AssetReference<UpdateGroupAsset> reference = entry.Builder;
+                AssetIdReference<UpdateGroupAsset> reference = entry.Builder;
 
                 description.SubGroups.Add(reference.Guid, new UpdateGroupItemDescription<IUpdateGroupBuilder>(entry.Group, reference.Asset));
             }
@@ -100,9 +100,9 @@ namespace UGF.Module.Update.Runtime
             {
                 BuilderEntry<BuilderAssetBase> entry = m_entries[i];
 
-                if (string.IsNullOrEmpty(entry.Group)) throw new ArgumentException("Value cannot be null or empty.", nameof(entry.Group));
+                if (!entry.Group.IsValid()) throw new ArgumentException("Value should be valid.", nameof(entry.Group));
 
-                AssetReference<BuilderAssetBase> reference = entry.Builder;
+                AssetIdReference<BuilderAssetBase> reference = entry.Builder;
 
                 description.Entries.Add(reference.Guid, new UpdateGroupItemDescription<IBuilder>(entry.Group, reference.Asset));
             }
