@@ -2,8 +2,8 @@
   "name": "com.ugf.module.update",
   "displayName": "UGF.Module.Update",
   "version": "3.0.0-preview.2",
-  "unity": "2021.1",
-  "apiCompatibility": ".NET Standard 2.0",
+  "unity": "2022.1",
+  "apiCompatibility": ".NET Standard 2.1",
   "description": "Module to manage update player loop.",
   "author": {
     "name": "Unity Game Framework",
