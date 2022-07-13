@@ -1,4 +1,5 @@
-﻿using UGF.EditorTools.Editor.IMGUI;
+﻿using UGF.EditorTools.Editor.Ids;
+using UGF.EditorTools.Editor.IMGUI;
 using UGF.EditorTools.Editor.IMGUI.Scopes;
 using UnityEditor;
 using UnityEngine;
@@ -39,7 +40,7 @@ namespace UGF.Module.Update.Editor
 
         private static string GetGroupName(SerializedProperty serializedProperty)
         {
-            string value = serializedProperty.stringValue;
+            string value = GlobalIdEditorUtility.GetGuidFromProperty(serializedProperty);
 
             if (!string.IsNullOrEmpty(value))
             {
