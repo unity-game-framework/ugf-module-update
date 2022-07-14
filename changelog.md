@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0-preview](https://github.com/unity-game-framework/ugf-module-update/releases/tag/4.0.0-preview) - 2022-07-14  
+
+### Release Notes
+
+- [Milestone](https://github.com/unity-game-framework/ugf-module-update/milestone/10?closed=1)  
+    
+
+### Changed
+
+- Change string ids to global id data ([#38](https://github.com/unity-game-framework/ugf-module-update/issues/38))  
+    - Update dependencies: `com.ugf.application` to `8.3.0`, `com.ugf.update` to `6.0.0` and `com.ugf.editortools` to `2.8.1` versions.
+    - Update package _Unity_ version to `2022.1`.
+    - Update package _API Compatibility_ to `.NET Standard 2.1`.
+    - Change usage of ids as `GlobalId` structure instead of `string`.
+
 ## [3.0.0-preview.2](https://github.com/unity-game-framework/ugf-module-update/releases/tag/3.0.0-preview.2) - 2021-06-23  
 
 ### Release Notes
