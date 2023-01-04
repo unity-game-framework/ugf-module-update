@@ -2,7 +2,7 @@
   "name": "com.ugf.module.update",
   "displayName": "UGF.Module.Update",
   "version": "4.0.0-preview",
-  "unity": "2022.1",
+  "unity": "2022.2",
   "apiCompatibility": ".NET Standard 2.1",
   "description": "Module to manage update player loop.",
   "author": {
