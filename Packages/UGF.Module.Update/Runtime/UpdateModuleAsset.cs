@@ -59,12 +59,12 @@ namespace UGF.Module.Update.Runtime
             public AssetIdReference<TBuilder> Builder { get { return m_builder; } set { m_builder = value; } }
         }
 
-        protected override IApplicationModuleDescription OnBuildDescription()
+        protected override UpdateModuleDescription OnBuildDescription()
         {
-            var description = new UpdateModuleDescription
-            {
-                RegisterType = typeof(IUpdateModule)
-            };
+            var systems = new List<UpdateSystemDescription>();
+            var groups = new Dictionary<GlobalId, UpdateGroupSystemDescription>();
+            var subGroups = new Dictionary<GlobalId, UpdateGroupItemDescription<IUpdateGroupBuilder>>();
+            var entries = new Dictionary<GlobalId, UpdateGroupItemDescription<IBuilder>>();
 
             for (int i = 0; i < m_systems.Count; i++)
             {
@@ -73,7 +73,7 @@ namespace UGF.Module.Update.Runtime
                 Type systemType = entry.SystemType.Get();
                 UpdateSubSystemInsertion insertion = entry.Insertion;
 
-                description.Systems.Add(new UpdateSystemDescription(targetSystemType, systemType, insertion));
+                systems.Add(new UpdateSystemDescription(targetSystemType, systemType, insertion));
             }
 
             for (int i = 0; i < m_groups.Count; i++)
@@ -82,7 +82,7 @@ namespace UGF.Module.Update.Runtime
                 Type subSystemType = entry.SubSystemType.Get();
                 AssetIdReference<UpdateGroupAsset> reference = entry.Group;
 
-                description.Groups.Add(reference.Guid, new UpdateGroupSystemDescription(subSystemType, reference.Asset));
+                groups.Add(reference.Guid, new UpdateGroupSystemDescription(subSystemType, reference.Asset));
             }
 
             for (int i = 0; i < m_subGroups.Count; i++)
@@ -93,7 +93,7 @@ namespace UGF.Module.Update.Runtime
 
                 AssetIdReference<UpdateGroupAsset> reference = entry.Builder;
 
-                description.SubGroups.Add(reference.Guid, new UpdateGroupItemDescription<IUpdateGroupBuilder>(entry.Group, reference.Asset));
+                subGroups.Add(reference.Guid, new UpdateGroupItemDescription<IUpdateGroupBuilder>(entry.Group, reference.Asset));
             }
 
             for (int i = 0; i < m_entries.Count; i++)
@@ -104,10 +104,10 @@ namespace UGF.Module.Update.Runtime
 
                 AssetIdReference<BuilderAssetBase> reference = entry.Builder;
 
-                description.Entries.Add(reference.Guid, new UpdateGroupItemDescription<IBuilder>(entry.Group, reference.Asset));
+                entries.Add(reference.Guid, new UpdateGroupItemDescription<IBuilder>(entry.Group, reference.Asset));
             }
 
-            return description;
+            return new UpdateModuleDescription(systems, groups, subGroups, entries);
         }
 
         protected override IUpdateModule OnBuild(UpdateModuleDescription description, IApplication application)
