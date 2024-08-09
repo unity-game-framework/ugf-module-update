@@ -26,8 +26,8 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
     m_group:
       m_guid:
-        m_first: 16552005250661535434
-        m_second: 2968696433931137752
+        serializedVersion: 2
+        Hash: cace14461489b4e5d8326f86aded3229
       m_asset: {fileID: 11400000, guid: 4614ceca8914e5b4d8326f86aded3229, type: 2}
   m_subGroups:
   - m_group:
@@ -35,8 +35,8 @@ MonoBehaviour:
       m_second: 2968696433931137752
     m_builder:
       m_guid:
-        m_first: 16552005250661535434
-        m_second: 2968696433931137752
+        serializedVersion: 2
+        Hash: cace14461489b4e5d8326f86aded3229
       m_asset: {fileID: 11400000, guid: 4614ceca8914e5b4d8326f86aded3229, type: 2}
   m_entries:
   - m_group:
@@ -44,6 +44,6 @@ MonoBehaviour:
       m_second: 2968696433931137752
     m_builder:
       m_guid:
-        m_first: 10341505688107719393
-        m_second: 4218708309430516171
+        serializedVersion: 2
+        Hash: e19a57b6a168848fcb399812dbdc8b3a
       m_asset: {fileID: 11400000, guid: b6579ae168a18f84cb399812dbdc8b3a, type: 2}

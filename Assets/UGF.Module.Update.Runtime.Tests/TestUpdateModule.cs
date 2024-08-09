@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UGF.Application.Runtime;
+using UGF.Builder.Runtime;
 using UGF.EditorTools.Runtime.Ids;
 using UGF.Update.Runtime;
 using UnityEngine;
@@ -62,16 +64,10 @@ namespace UGF.Module.Update.Runtime.Tests
 
         private IApplication CreateApplication(string moduleName)
         {
-            return new ApplicationConfigured(new ApplicationResources
+            return new Application.Runtime.Application(new ApplicationDescription(false, new Dictionary<GlobalId, IBuilder<IApplication, IApplicationModule>>
             {
-                new ApplicationConfig
-                {
-                    Modules =
-                    {
-                        (IApplicationModuleBuilder)Resources.Load(moduleName, typeof(IApplicationModuleBuilder))
-                    }
-                }
-            });
+                { new GlobalId("4614ceca8914e5b4d8326f86aded3229"), Resources.Load<ApplicationModuleAsset>(moduleName) }
+            }));
         }
     }
 }
